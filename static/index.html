@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DreamForge AI - Multi-Agent Startup Incubator</title>
+    <!-- Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="dark-theme">
+    <!-- Neural Network background animation canvas -->
+    <canvas id="neuralCanvas"></canvas>
+
+    <!-- ----------------- LANDING PAGE ----------------- -->
+    <section id="landingPage" class="view-panel active">
+        <header class="landing-header">
+            <div class="logo" onclick="location.reload()">
+                <i data-lucide="orbit" class="accent-glow"></i>
+                <span>DreamForge AI</span>
+            </div>
+            <nav class="landing-nav">
+                <a href="#how">How it works</a>
+                <a href="#agents">Agents</a>
+                <a href="#testimonials">Testimonials</a>
+                <a href="#faq">FAQ</a>
+            </nav>
+            <button class="primary-btn" onclick="navigateTo('dashboard')">Open App</button>
+        </header>
+
+        <!-- Hero Section -->
+        <div class="landing-hero">
+            <h1 class="hero-title animate-gradient">Turn Ideas Into Startups<br>With AI Agents</h1>
+            <p class="hero-subtitle">DreamForge AI uses specialized AI agents to research, analyze, validate and plan your business idea in minutes — not months.</p>
+            <div class="hero-actions">
+                <button class="primary-btn" onclick="navigateTo('newAnalysis')">Start Building <i data-lucide="arrow-right"></i></button>
+                <button class="secondary-btn" onclick="navigateTo('dashboard')">Launch Dashboard <i data-lucide="layout"></i></button>
+            </div>
+        </div>
+
+        <!-- 3-Steps Section -->
+        <section id="how" class="steps-section">
+            <h2 class="section-title">From idea to blueprint in 3 steps</h2>
+            <div class="steps-grid">
+                <div class="step-card glass-card">
+                    <span class="step-num">01</span>
+                    <h3>Describe your idea</h3>
+                    <p>Drop in a one-line idea or a detailed pitch brief — DreamForge handles the rest, analyzing your concept contextually.</p>
+                </div>
+                <div class="step-card glass-card">
+                    <span class="step-num">02</span>
+                    <h3>Agents collaborate</h3>
+                    <p>Six specialized C-suite AI agents research, validate, simulate finances, and review the draft documents in loops.</p>
+                </div>
+                <div class="step-card glass-card">
+                    <span class="step-num">03</span>
+                    <h3>Get your blueprint</h3>
+                    <p>Receive a comprehensive founder-grade business report with scores, market size projections, and a GTM roadmap.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Agent C-Suite Section -->
+        <section id="agents" class="agents-section">
+            <h2 class="section-title">Meet your AI agent team</h2>
+            <div class="agents-grid-landing">
+                <div class="agent-landing-card security glass-card">
+                    <div class="agent-icon-wrapper">🛡️</div>
+                    <h3>Security Agent</h3>
+                    <span class="agent-role">CISO & Safety Compliance</span>
+                    <p class="agent-desc">Validates input & ensures safety. Screens startup ideas for legal compliance, IP risk, and policy violations before entering pipeline.</p>
+                </div>
+                <div class="agent-landing-card planner glass-card">
+                    <div class="agent-icon-wrapper">📋</div>
+                    <h3>Planner Agent</h3>
+                    <span class="agent-role">CEO & Strategy Architect</span>
+                    <p class="agent-desc">Designs the business canvas model drafts. Decomposes startup pitches and schedules tasks dynamically for execution.</p>
+                </div>
+                <div class="agent-landing-card research glass-card">
+                    <div class="agent-icon-wrapper">🔍</div>
+                    <h3>Research Agent</h3>
+                    <span class="agent-role">VP of Market Intelligence</span>
+                    <p class="agent-desc">Analyzes target competitors and market sizes. Pulls web metrics and maps competitive threats and entry barriers.</p>
+                </div>
+                <div class="agent-landing-card finance glass-card">
+                    <div class="agent-icon-wrapper">💰</div>
+                    <h3>Finance Agent</h3>
+                    <span class="agent-role">CFO & Quantitative Modeler</span>
+                    <p class="agent-desc">Models operating unit economics. Generates 3-year projections, CAC boundaries, and deterministic break-even calculations.</p>
+                </div>
+                <div class="agent-landing-card marketing glass-card">
+                    <div class="agent-icon-wrapper">📣</div>
+                    <h3>Marketing Agent</h3>
+                    <span class="agent-role">CMO & Brand Growth Director</span>
+                    <p class="agent-desc">Crafts the branding campaign messaging. Designs GTM customer acquisition channels, timelines, and value propositions.</p>
+                </div>
+                <div class="agent-landing-card reviewer glass-card">
+                    <div class="agent-icon-wrapper">⚖️</div>
+                    <h3>Reviewer Agent</h3>
+                    <span class="agent-role">Venture Reviewer & Judge</span>
+                    <p class="agent-desc">Audits all segments programmatically. Scores completeness and feasibility, and triggers dynamic rework iterations.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section id="testimonials" class="testimonials-section">
+            <h2 class="section-title">What founders are saying</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card glass-card">
+                    <div class="quote-icon">“</div>
+                    <p class="testimonial-text">Validated my SaaS idea in 8 minutes. Saved me a $20K consultant check.</p>
+                    <span class="testimonial-author">— SaaS Tech Founder</span>
+                </div>
+                <div class="testimonial-card glass-card">
+                    <div class="quote-icon">“</div>
+                    <p class="testimonial-text">The 90-day GTM campaign playbook was sharper than what our YC partner feedback gave us.</p>
+                    <span class="testimonial-author">— YC Incubator Graduate</span>
+                </div>
+                <div class="testimonial-card glass-card">
+                    <div class="quote-icon">“</div>
+                    <p class="testimonial-text">It is literally a venture studio in a single browser tab. Amazing multi-agent coordination.</p>
+                    <span class="testimonial-author">— Serial Builder</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bottom CTA -->
+        <div class="landing-cta" id="faq">
+            <h2 class="section-title" style="margin-bottom: 1.5rem;">Your next startup is one prompt away</h2>
+            <p class="hero-subtitle">Spin up your team of specialized AI agents and forge your idea into a blueprint today.</p>
+            <button class="primary-btn launch-btn" onclick="navigateTo('newAnalysis')" style="max-width: 300px;">Launch DreamForge <i data-lucide="zap"></i></button>
+        </div>
+
+        <!-- Footer -->
+        <footer class="landing-footer">
+            <span>© 2026 DreamForge AI. All rights reserved.</span>
+            <span>Google Intensive AI Agents Cohort MVP</span>
+        </footer>
+    </section>
+
+    <!-- ----------------- APP SHELL ----------------- -->
+    <main id="appShell" class="app-layout view-panel">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <!-- Logo -->
+            <div class="sidebar-logo-wrap" onclick="navigateTo('landing')">
+                <div class="sidebar-logo-icon">
+                    <i data-lucide="orbit"></i>
+                </div>
+                <span class="sidebar-brand">DreamForge<span class="brand-ai">.AI</span></span>
+            </div>
+
+            <!-- Nav items -->
+            <nav class="sidebar-menu">
+                <button class="nav-item active" data-target="dashboard" onclick="navigateTo('dashboard')">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-item" data-target="newAnalysis" onclick="navigateTo('newAnalysis')">
+                    <i data-lucide="sparkles"></i>
+                    <span>New Analysis</span>
+                </button>
+                <button class="nav-item" data-target="agentWorkspace" onclick="navigateTo('agentWorkspace')">
+                    <i data-lucide="bot"></i>
+                    <span>Agent Workspace</span>
+                </button>
+                <button class="nav-item" data-target="agentWorkspace" onclick="navigateTo('agentWorkspace')">
+                    <i data-lucide="activity"></i>
+                    <span>Live Execution</span>
+                </button>
+                <button class="nav-item" data-target="history" onclick="navigateTo('history')">
+                    <i data-lucide="file-text"></i>
+                    <span>Reports</span>
+                </button>
+                <button class="nav-item" data-target="agentDetails" onclick="navigateTo('agentDetails')">
+                    <i data-lucide="users"></i>
+                    <span>Agents</span>
+                </button>
+                <button class="nav-item" data-target="history" onclick="navigateTo('history')">
+                    <i data-lucide="clock"></i>
+                    <span>History</span>
+                </button>
+                <button class="nav-item" data-target="dashboard" onclick="navigateTo('dashboard')">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </button>
+            </nav>
+
+            <!-- Bottom Workspace + Credits block -->
+            <div class="sidebar-workspace-block">
+                <span class="workspace-label">Workspace</span>
+                <span class="workspace-name">Nova Labs <span class="workspace-pro">· Pro</span></span>
+                <div class="credits-bar-wrapper">
+                    <div class="credits-bar-fill"></div>
+                </div>
+                <span class="credits-count">182 / 240 credits</span>
+            </div>
+        </aside>
+
+        <!-- Right Column: Topbar + Content -->
+        <div class="right-column">
+            <!-- Top Header Bar -->
+            <header class="app-topbar">
+                <div class="topbar-search">
+                    <i data-lucide="search"></i>
+                    <input type="text" placeholder="Search analyses, agents, reports..." id="topbarSearch" />
+                </div>
+                <div class="topbar-actions">
+                    <button class="topbar-icon-btn" title="Notifications">
+                        <i data-lucide="bell"></i>
+                    </button>
+                    <div class="topbar-avatar">N</div>
+                </div>
+            </header>
+
+            <!-- Dynamic Main Content Panels -->
+            <section class="main-content">
+            <!-- 1. DASHBOARD VIEW -->
+            <div id="dashboardView" class="sub-view active">
+                <h2 class="view-title">Dashboard</h2>
+                <p class="view-subtitle">Your startup incubator at a glance.</p>
+                <div class="metrics-grid">
+                    <div class="metric-card glass-card">
+                        <span class="metric-label">Analyses Generated</span>
+                        <h3 class="metric-value" id="statAnalyses">0</h3>
+                    </div>
+                    <div class="metric-card glass-card">
+                        <span class="metric-label">Active C-Suite Agents</span>
+                        <h3 class="metric-value">6</h3>
+                    </div>
+                    <div class="metric-card glass-card">
+                        <span class="metric-label">Avg Readiness Score</span>
+                        <h3 class="metric-value">84%</h3>
+                    </div>
+                </div>
+
+                <div class="projects-section glass-card">
+                    <h3>Recent Startup Projects</h3>
+                    <div class="table-container">
+                        <table id="projectsTable">
+                            <thead>
+                                <tr>
+                                    <th>Startup Concept</th>
+                                    <th>Target Region</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. NEW STARTUP ANALYSIS VIEW -->
+            <div id="newAnalysisView" class="sub-view">
+                <p class="view-page-label">New Analysis</p>
+                <h2 class="view-title">Describe your startup idea</h2>
+                <p class="view-subtitle">Our agents will validate, research and blueprint it in minutes.</p>
+
+                <div class="new-analysis-card glass-card">
+                    <!-- YOUR IDEA label + textarea -->
+                    <div class="idea-label">YOUR IDEA</div>
+                    <textarea id="startupIdea" class="idea-textarea" placeholder="e.g. A hyper-local logistics platform delivering freshly brewed organic coffee to developers at their desks within 10 minutes."></textarea>
+
+                    <!-- Suggestion pills -->
+                    <div class="suggestion-pills">
+                        <button class="suggestion-pill" onclick="useExample('A sustainable clothing brand using recycled ocean plastics')">
+                            <i data-lucide="sparkles"></i> A sustainable clothing brand using recycled ocean plastics
+                        </button>
+                        <button class="suggestion-pill" onclick="useExample('An AI-powered fitness coach for new mothers')">
+                            <i data-lucide="sparkles"></i> An AI-powered fitness coach for new mothers
+                        </button>
+                        <button class="suggestion-pill" onclick="useExample('An online tutoring marketplace connecting retirees with kids')">
+                            <i data-lucide="sparkles"></i> An online tutoring marketplace connecting retirees with kids
+                        </button>
+                    </div>
+
+                    <!-- 4-column dropdowns -->
+                    <div class="analysis-options-row">
+                        <div class="form-group">
+                            <label>Industry</label>
+                            <select id="ideaIndustry">
+                                <option value="SaaS">SaaS</option>
+                                <option value="B2B SaaS">B2B SaaS</option>
+                                <option value="Consumer Tech">Consumer Tech</option>
+                                <option value="FinTech">FinTech</option>
+                                <option value="Logistics/E-comm">Logistics &amp; E-Commerce</option>
+                                <option value="Health/BioTech">Health &amp; Biotech</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Budget Range</label>
+                            <select id="ideaBudget">
+                                <option>&lt; $10K</option>
+                                <option>$10K – $50K</option>
+                                <option>$50K – $200K</option>
+                                <option>$200K+</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Target Market</label>
+                            <select id="ideaMarketType">
+                                <option>Consumer (B2C)</option>
+                                <option>Business (B2B)</option>
+                                <option>Global</option>
+                                <option>Local</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Stage</label>
+                            <select id="ideaStage">
+                                <option>Idea</option>
+                                <option>MVP</option>
+                                <option>Early Traction</option>
+                                <option>Scaling</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Footer row: run time + launch button -->
+                    <div class="analysis-footer-row">
+                        <span class="run-time-label">Avg. run time &middot; 3&ndash;7 min</span>
+                        <button class="launch-btn-full" onclick="submitStartupAnalysis()">
+                            <i data-lucide="rocket"></i> Launch DreamForge
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. AGENT WORKSPACE VIEW -->
+            <div id="agentWorkspaceView" class="sub-view">
+                <p class="view-page-label">Agent Workspace</p>
+                <h2 class="view-title">Multi-agent pipeline</h2>
+                <p class="view-subtitle">Watch your agents collaborate in real-time.</p>
+                
+                <!-- Dynamic Pipeline Layout -->
+                <div class="pipeline-wrapper glass-card">
+                    <div class="pipeline-nodes">
+                        <div class="pipeline-node start-node" id="nodeIdea">
+                            <i data-lucide="lightbulb"></i>
+                            <span>Idea Submitted</span>
+                        </div>
+                        
+                        <div class="pipeline-connection" id="conn1"><div class="flow-dot"></div></div>
+                        
+                        <div class="pipeline-node" id="nodeSecurity">
+                            <i data-lucide="shield-check"></i>
+                            <span>Security Agent</span>
+                            <div class="node-status">Waiting</div>
+                        </div>
+                        
+                        <div class="pipeline-connection" id="conn2"><div class="flow-dot"></div></div>
+                        
+                        <div class="pipeline-node" id="nodePlanner">
+                            <i data-lucide="scroll"></i>
+                            <span>Planner Agent</span>
+                            <div class="node-status">Waiting</div>
+                        </div>
+                        
+                        <div class="pipeline-connection" id="conn3"><div class="flow-dot"></div></div>
+                        
+                        <div class="pipeline-node" id="nodeResearch">
+                            <i data-lucide="search"></i>
+                            <span>Research Agent</span>
+                            <div class="node-status">Waiting</div>
+                        </div>
+                        
+                        <div class="pipeline-connection" id="conn4"><div class="flow-dot"></div></div>
+                        
+                        <div class="pipeline-node" id="nodeFinance">
+                            <i data-lucide="badge-dollar-sign"></i>
+                            <span>Finance Agent</span>
+                            <div class="node-status">Waiting</div>
+                        </div>
+                        
+                        <div class="pipeline-connection" id="conn5"><div class="flow-dot"></div></div>
+                        
+                        <div class="pipeline-node" id="nodeMarketing">
+                            <i data-lucide="megaphone"></i>
+                            <span>Marketing Agent</span>
+                            <div class="node-status">Waiting</div>
+                        </div>
+                        
+                        <div class="pipeline-connection" id="conn6"><div class="flow-dot"></div></div>
+                        
+                        <div class="pipeline-node" id="nodeReviewer">
+                            <i data-lucide="scale"></i>
+                            <span>Reviewer Agent</span>
+                            <div class="node-status">Waiting</div>
+                        </div>
+                        
+                        <div class="pipeline-connection" id="conn7"><div class="flow-dot"></div></div>
+                        
+                        <div class="pipeline-node end-node" id="nodeBlueprint">
+                            <i data-lucide="award"></i>
+                            <span>Blueprint Sealed</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Ticker Logs Console -->
+                <div class="console-wrapper glass-card">
+                    <div class="console-header">
+                        <span><i data-lucide="terminal"></i> Live Collaboration Stream</span>
+                        <div class="console-progress" id="consoleProgress">0% Complete</div>
+                    </div>
+                    <div class="console-logs" id="consoleLogs">
+                        <div class="log-entry system-log">Select or start a startup analysis to view the live agent reasoning logs.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. AGENT DETAILS / SPECIFICATIONS VIEW -->
+            <div id="agentDetailsView" class="sub-view">
+                <h2 class="view-title">AI C-Suite Specifications</h2>
+                <div class="agents-grid">
+                    <div class="agent-detail-card glass-card">
+                        <h3>🛡️ Security Agent</h3>
+                        <p><strong>Responsibilities:</strong> Filters toxicity, identifies licensing challenges, and protects intellectual property.</p>
+                        <p><strong>Inputs:</strong> Raw idea description, target market parameters.</p>
+                        <p><strong>Outputs:</strong> Safety parameters, risk metrics.</p>
+                        <p><strong>Tools:</strong> Prompt sanitizers, pattern scanners.</p>
+                    </div>
+                    <div class="agent-detail-card glass-card">
+                        <h3>📋 Planner Agent</h3>
+                        <p><strong>Responsibilities:</strong> Deconstructs startup pitch and generates company outline drafts.</p>
+                        <p><strong>Inputs:</strong> Sanitized startup pitch context.</p>
+                        <p><strong>Outputs:</strong> Action task guidelines for workers.</p>
+                        <p><strong>Tools:</strong> Core prompt scheduler, structured naming modules.</p>
+                    </div>
+                    <div class="agent-detail-card glass-card">
+                        <h3>🔍 Research Agent</h3>
+                        <p><strong>Responsibilities:</strong> Locates target competitors, sizes market segments (TAM/SAM/SOM).</p>
+                        <p><strong>Inputs:</strong> CEO briefs, location context.</p>
+                        <p><strong>Outputs:</strong> Competitive matrix, trends, target personas.</p>
+                        <p><strong>Tools:</strong> Native search, BeautifulSoup scraping.</p>
+                    </div>
+                    <div class="agent-detail-card glass-card">
+                        <h3>💰 Finance Agent</h3>
+                        <p><strong>Responsibilities:</strong> Simulates cash balance ledgers and unit economics margins.</p>
+                        <p><strong>Inputs:</strong> Cost guidelines, competitor models.</p>
+                        <p><strong>Outputs:</strong> 3-year cash forecasts, unit economics targets.</p>
+                        <p><strong>Tools:</strong> Reusable unit math formulas, programmatic sandbox calculator.</p>
+                    </div>
+                    <div class="agent-detail-card glass-card">
+                        <h3>📣 Marketing Agent</h3>
+                        <p><strong>Responsibilities:</strong> Designs brand storytelling messaging and customer acquisition mixes.</p>
+                        <p><strong>Inputs:</strong> Competitor matrices, cost variables.</p>
+                        <p><strong>Outputs:</strong> Value propositions, marketing roadmaps.</p>
+                        <p><strong>Tools:</strong> GTM scheduler models, CAC/LTV validation bounds.</p>
+                    </div>
+                    <div class="agent-detail-card glass-card">
+                        <h3>⚖️ Reviewer Agent</h3>
+                        <p><strong>Responsibilities:</strong> Evaluates complete packages for math errors and strategic alignment.</p>
+                        <p><strong>Inputs:</strong> Combined draft reports of all agents.</p>
+                        <p><strong>Outputs:</strong> Pydantic Scorecard, rework instructions.</p>
+                        <p><strong>Tools:</strong> Structured scorecard auditor.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. HISTORY VIEW -->
+            <div id="historyView" class="sub-view">
+                <h2 class="view-title">Project Archive</h2>
+                <div class="glass-card">
+                    <div class="table-container">
+                        <table id="historyTable">
+                            <thead>
+                                <tr>
+                                    <th>Startup Concept</th>
+                                    <th>Target Market</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. FINAL REPORT VIEW (HIDDEN TILL SELECT) -->
+            <div id="reportView" class="sub-view">
+                <div class="report-header-wrapper">
+                    <div>
+                        <h2 class="view-title" id="repStartupName">Startup Blueprint</h2>
+                        <p class="subtitle" id="repOneLiner">Value Proposition One-Liner</p>
+                    </div>
+                    <div class="report-actions">
+                        <button class="primary-btn" onclick="exportBlueprintMarkdown()"><i data-lucide="download"></i> Export Markdown</button>
+                    </div>
+                </div>
+
+                <!-- Report Tabs -->
+                <div class="report-tabs">
+                    <button class="rep-tab active" onclick="switchReportTab(event, 'repExecSummary')">📋 Exec Summary</button>
+                    <button class="rep-tab" onclick="switchReportTab(event, 'repMarket')">🔍 Market & Competitors</button>
+                    <button class="rep-tab" onclick="switchReportTab(event, 'repFinance')">💰 Financial Plan</button>
+                    <button class="rep-tab" onclick="switchReportTab(event, 'repMarketing')">📣 GTM & Campaign</button>
+                    <button class="rep-tab" onclick="switchReportTab(event, 'repTelemetry')">📊 Observability</button>
+                </div>
+
+                <div class="report-content-box glass-card">
+                    <!-- Tab Exec -->
+                    <div id="repExecSummary" class="rep-section-content active">
+                        <h3>Business Vision</h3>
+                        <p id="repVisionText">Vision data</p>
+                    </div>
+
+                    <!-- Tab Market -->
+                    <div id="repMarket" class="rep-section-content">
+                        <h3>TAM / SAM / SOM</h3>
+                        <p id="repMarketSize">TAM metrics</p>
+                        
+                        <h3>Target customer Persona</h3>
+                        <p id="repPersona">Persona description</p>
+
+                        <h3>Market Barriers & Entry Risks</h3>
+                        <ul id="repBarriersList"></ul>
+                    </div>
+
+                    <!-- Tab Finance -->
+                    <div id="repFinance" class="rep-section-content">
+                        <h3>Revenue & Costs Modeling</h3>
+                        <p id="repRevenueModel">Pricing parameters</p>
+                        
+                        <div class="financials-grid">
+                            <div>
+                                <p><strong>Break-even Timeline:</strong> <span id="repBreakEven">Month 6</span></p>
+                                <p><strong>Capex Setup Needs:</strong> <span id="repFunding">Capital info</span></p>
+                            </div>
+                        </div>
+
+                        <h3>Unit Economics Summary</h3>
+                        <p id="repUnitEconomics">Unit metrics</p>
+                    </div>
+
+                    <!-- Tab GTM Marketing -->
+                    <div id="repMarketing" class="rep-section-content">
+                        <h3>Brand Positioning</h3>
+                        <p id="repPositioning">Positioning statement</p>
+
+                        <h3>Value Propositions</h3>
+                        <ul id="repValueProps"></ul>
+
+                        <h3>GTM Roadmaps</h3>
+                        <ul id="repGtmTimeline"></ul>
+                    </div>
+
+                    <!-- Tab Observability -->
+                    <div id="repTelemetry" class="rep-section-content">
+                        <h3>Agent Loop Telemetry</h3>
+                        <div class="observability-metrics">
+                            <p><strong>QA Iteration Loops Run:</strong> <span id="repCycles">1</span></p>
+                            <p><strong>Total Session Tokens:</strong> <span id="repTokens">0</span></p>
+                            <p><strong>Session Compile Time:</strong> <span id="repTime">0.00s</span></p>
+                        </div>
+                        
+                        <h3>Validation Bar Chart</h3>
+                        <div style="max-height: 250px; max-width: 450px;">
+                            <canvas id="scoresChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        </div><!-- /right-column -->
+    </main>
+
+    <!-- App Logic Scripts -->
+    <script src="/static/js/network.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
