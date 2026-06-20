@@ -1,6 +1,16 @@
 import requests
 from bs4 import BeautifulSoup
+from tools.mcp_registry import mcp_registry
+from pydantic import BaseModel, Field
 
+class ScrapeInputs(BaseModel):
+    url: str = Field(description="The exact URL of the website or competitor landing page to crawl.")
+
+@mcp_registry.register(
+    name="scrape_page_content",
+    description="Fetches and parses a specific URL to clean HTML into readable text/markdown.",
+    input_schema=ScrapeInputs
+)
 def scrape_page(url):
     """
     Scrapes the text content of a webpage and returns the title and content.

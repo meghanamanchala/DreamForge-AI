@@ -28,10 +28,12 @@ class DreamForgeOrchestrator:
         self.marketing_agent = MarketingAgent(self.client)
         self.reviewer_agent = ReviewerAgent(self.client)
 
-    def _log_status(self, session_id, agent_name, step_name, thoughts, output_data=None):
+    def _log_status(self, session_id, agent_name, step_name, thoughts, output_data=None, agent=None):
         """Helper to save log to SQLite and trigger UI callback."""
         output_str = json.dumps(output_data) if output_data else ""
-        database.save_agent_log(session_id, agent_name, step_name, thoughts, output_str)
+        tokens_used = agent.last_tokens_used if agent else 0
+        latency_ms = agent.last_latency_ms if agent else 0
+        database.save_agent_log(session_id, agent_name, step_name, thoughts, output_str, tokens_used, latency_ms)
         if self.status_callback:
             self.status_callback(agent_name, step_name, thoughts)
 
@@ -58,7 +60,8 @@ class DreamForgeOrchestrator:
                 "Security Agent", 
                 "Rejection", 
                 f"Startup idea rejected. Reason: {security_res.get('violation_reason')}",
-                security_res
+                security_res,
+                agent=self.security_agent
             )
             database.update_session_status(session_id, "failed_security")
             return {
@@ -68,14 +71,14 @@ class DreamForgeOrchestrator:
                 "suggestions": security_res.get("suggestions")
             }
             
-        self._log_status(session_id, "Security Agent", "Approval", "Startup idea passed safety verification. Proceeding to CEO planning phase.", security_res)
+        self._log_status(session_id, "Security Agent", "Approval", "Startup idea passed safety verification. Proceeding to CEO planning phase.", security_res, agent=self.security_agent)
 
         # 3. CEO Planner Phase
         self._log_status(session_id, "Planner Agent", "Deconstruction", "CEO is proposing a brand name, writing an executive summary, and organizing task briefs.")
         database.update_session_status(session_id, "planning")
         
         plan = self.planner_agent.plan_blueprint(idea, target_market)
-        self._log_status(session_id, "Planner Agent", "Plan Created", f"CEO proposed company name '{plan.get('startup_name')}' and set core tasks.", plan)
+        self._log_status(session_id, "Planner Agent", "Plan Created", f"CEO proposed company name '{plan.get('startup_name')}' and set core tasks.", plan, agent=self.planner_agent)
         
         # Prepare execution tasks instructions
         tasks_map = {t["agent_name"]: t["instructions"] for t in plan.get("tasks", [])}
@@ -108,7 +111,7 @@ class DreamForgeOrchestrator:
                     mod_instr += f"\n\n[REWORK DIRECTIVE] Address the following audit concerns: {', '.join(reviewer_critique.get('feedback_comments', []))}"
                     
                 research_draft = self.research_agent.perform_research(idea, target_market, mod_instr)
-                self._log_status(session_id, "Research Agent", f"Research Completed{cycle_desc}", "Sized TAM/SAM/SOM and identified direct market competitors.", research_draft)
+                self._log_status(session_id, "Research Agent", f"Research Completed{cycle_desc}", "Sized TAM/SAM/SOM and identified direct market competitors.", research_draft, agent=self.research_agent)
 
             # --- Finance Agent ---
             if not finance_draft or (reviewer_critique and reviewer_critique.get("target_agent") == "Finance Agent"):
@@ -120,7 +123,7 @@ class DreamForgeOrchestrator:
                     mod_instr += f"\n\n[REWORK DIRECTIVE] Address the following audit concerns: {', '.join(reviewer_critique.get('feedback_comments', []))}"
                 
                 finance_draft = self.finance_agent.generate_projections(idea, mod_instr, research_draft)
-                self._log_status(session_id, "Finance Agent", f"Finance Completed{cycle_desc}", "Completed 3-year P&L sheet and break-even calculations.", finance_draft)
+                self._log_status(session_id, "Finance Agent", f"Finance Completed{cycle_desc}", "Completed 3-year P&L sheet and break-even calculations.", finance_draft, agent=self.finance_agent)
 
             # --- Marketing Agent ---
             if not marketing_draft or (reviewer_critique and reviewer_critique.get("target_agent") == "Marketing Agent"):
@@ -132,7 +135,7 @@ class DreamForgeOrchestrator:
                     mod_instr += f"\n\n[REWORK DIRECTIVE] Address the following audit concerns: {', '.join(reviewer_critique.get('feedback_comments', []))}"
                 
                 marketing_draft = self.marketing_agent.formulate_gtm(idea, mod_instr, research_draft, finance_draft)
-                self._log_status(session_id, "Marketing Agent", f"Marketing Completed{cycle_desc}", "Mapped growth milestones and customer acquisition strategy.", marketing_draft)
+                self._log_status(session_id, "Marketing Agent", f"Marketing Completed{cycle_desc}", "Mapped growth milestones and customer acquisition strategy.", marketing_draft, agent=self.marketing_agent)
 
             # --- Reviewer Agent ---
             self._log_status(session_id, "Reviewer Agent", f"Cross-Audit Check{cycle_desc}", "Auditing draft packages for logical alignment, realistic targets, and financial consistency.")
@@ -147,12 +150,12 @@ class DreamForgeOrchestrator:
             )
             
             if review_res.get("passed", True) or not review_res.get("rework_needed", False):
-                self._log_status(session_id, "Reviewer Agent", "Audit Cleared", "All drafts are consistent and approved. Compiling final blueprint.", review_res)
+                self._log_status(session_id, "Reviewer Agent", "Audit Cleared", "All drafts are consistent and approved. Compiling final blueprint.", review_res, agent=self.reviewer_agent)
                 break
             else:
                 target = review_res.get("target_agent", "None")
                 critique_msg = f"Audit flagged issues in {target}. Requesting revision. Comments: {', '.join(review_res.get('feedback_comments', []))}"
-                self._log_status(session_id, "Reviewer Agent", f"Audit Flagged{cycle_desc}", critique_msg, review_res)
+                self._log_status(session_id, "Reviewer Agent", f"Audit Flagged{cycle_desc}", critique_msg, review_res, agent=self.reviewer_agent)
                 
                 reviewer_critique = review_res
                 current_cycle += 1
@@ -172,6 +175,9 @@ class DreamForgeOrchestrator:
             "audit_log": {
                 "reviewer_passed": True,
                 "cycles_run": current_cycle,
+                "completeness_score": review_res.get("completeness_score", 0.0),
+                "feasibility_score": review_res.get("feasibility_score", 0.0),
+                "alignment_score": review_res.get("alignment_score", 0.0),
                 "feedback": review_res.get("feedback_comments", [])
             }
         }

@@ -1,10 +1,22 @@
 import requests
 import os
+from tools.mcp_registry import mcp_registry
+from pydantic import BaseModel, Field
 try:
     from duckduckgo_search import DDGS  # type: ignore
 except ImportError:
     DDGS = None
 
+class WebSearchInputs(BaseModel):
+    query: str = Field(description="The search query query (e.g. 'B2B SaaS logistics startups').")
+    tavily_api_key: str = Field(default=None, description="Optional Tavily API key.")
+    max_results: int = Field(default=5, description="Number of search hits to fetch.")
+
+@mcp_registry.register(
+    name="web_search",
+    description="Searches the web for competitors, trends, and market statistics.",
+    input_schema=WebSearchInputs
+)
 def web_search(query, tavily_api_key=None, max_results=5):
     """
     Searches the web for relevant market information.

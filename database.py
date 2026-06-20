@@ -46,10 +46,22 @@ def init_db():
         step_name TEXT NOT NULL,
         thoughts TEXT,
         output TEXT,
+        tokens_used INTEGER DEFAULT 0,
+        latency_ms INTEGER DEFAULT 0,
         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (session_id) REFERENCES sessions (id) ON DELETE CASCADE
     )
     """)
+
+    # Migrations for existing databases
+    try:
+        cursor.execute("ALTER TABLE agent_logs ADD COLUMN tokens_used INTEGER DEFAULT 0")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute("ALTER TABLE agent_logs ADD COLUMN latency_ms INTEGER DEFAULT 0")
+    except sqlite3.OperationalError:
+        pass
     
     conn.commit()
     conn.close()
@@ -84,14 +96,14 @@ def get_session(session_id):
     conn.close()
     return dict(row) if row else None
 
-def save_agent_log(session_id, agent_name, step_name, thoughts, output=""):
+def save_agent_log(session_id, agent_name, step_name, thoughts, output="", tokens_used=0, latency_ms=0):
     """Inserts a new trace log for an agent execution step."""
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("""
-    INSERT INTO agent_logs (session_id, agent_name, step_name, thoughts, output)
-    VALUES (?, ?, ?, ?, ?)
-    """, (session_id, agent_name, step_name, thoughts, output))
+    INSERT INTO agent_logs (session_id, agent_name, step_name, thoughts, output, tokens_used, latency_ms)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (session_id, agent_name, step_name, thoughts, output, tokens_used, latency_ms))
     conn.commit()
     conn.close()
 
@@ -100,7 +112,7 @@ def get_agent_logs(session_id):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("""
-    SELECT agent_name, step_name, thoughts, output, timestamp 
+    SELECT agent_name, step_name, thoughts, output, tokens_used, latency_ms, timestamp 
     FROM agent_logs 
     WHERE session_id = ? 
     ORDER BY id ASC
