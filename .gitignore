@@ -1,0 +1,20 @@
+# API Keys and Secrets
+.env
+
+# Local database and cache
+dreamforge.db
+.sqlite
+
+# Python bytecode and temporary files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Operating system files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
