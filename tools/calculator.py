@@ -1,3 +1,20 @@
+from tools.mcp_registry import mcp_registry
+from pydantic import BaseModel, Field
+
+class FinancialSimInputs(BaseModel):
+    pricing_model: str = Field(default="subscription", description="Billing model: subscription, one_time, transactional, freemium.")
+    pricing_point: float = Field(default=29.0, description="The price target unit cost.")
+    fixed_monthly_costs: float = Field(default=5000.0, description="Operating costs per month.")
+    variable_cost_margin: float = Field(default=0.15, description="Variable cost percentage margin (0.0 to 1.0).")
+    estimated_growth_rate: float = Field(default=0.08, description="MoM customer growth rate (0.0 to 1.0).")
+    initial_investment: float = Field(default=25000.0, description="Starting cash capital.")
+    starting_customers: int = Field(default=50, description="Customer volume at launch month.")
+
+@mcp_registry.register(
+    name="run_financial_simulation",
+    description="Simulates a 3-year (36-month) operational cash ledger showing yearly summaries and break-even targets.",
+    input_schema=FinancialSimInputs
+)
 def run_financial_simulation(
     pricing_model="subscription",
     pricing_point=29.0,

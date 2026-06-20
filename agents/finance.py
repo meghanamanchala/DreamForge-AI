@@ -45,48 +45,39 @@ class FinanceAgent(BaseAgent):
 
     def generate_projections(self, idea, planner_instructions, research_data=None):
         """
-        Runs the full finance sequence:
-        1. Extract parameter values from idea & context.
-        2. Run numerical simulation.
-        3. Build structured report.
+        Runs the full finance sequence using native Gemini tool usage.
         """
-        # Step 1: Infer variables via LLM
-        param_prompt = (
-            f"Business Idea: {idea}\n"
-            f"Planner Directives: {planner_instructions}\n"
+        tools_list = [run_financial_simulation]
+        tools_map = {
+            "run_financial_simulation": run_financial_simulation
+        }
+
+        user_content = (
+            f"Startup Idea: {idea}\n"
+            f"Planner Instructions: {planner_instructions}\n"
             f"Research Insights: {str(research_data) if research_data else 'None'}\n\n"
-            "Extract and estimate reasonable financial parameters for our simulation calculator."
+            "Analyze the business concept and design the pricing structure. "
+            "Execute the financial simulation tool with appropriate parameters for pricing points, growth, and expenses "
+            "to calculate a 36-month projection, and return the complete draft."
         )
-        
-        params = self.generate_structured(
-            system_instruction="You are a financial analyst. Extract parameters strictly matching the requested schema.",
-            user_content=param_prompt,
-            response_schema=FinanceParamsSchema
+
+        # Step 1: Execute tool loop natively
+        draft_response = self.generate_text_with_tools(
+            system_instruction=self.system_instruction,
+            user_content=user_content,
+            tools_list=tools_list,
+            tools_map=tools_map
         )
-        
-        # Step 2: Run Calculator Tool
-        sim_results = run_financial_simulation(
-            pricing_model=params.get("pricing_model", "subscription"),
-            pricing_point=params.get("pricing_point", 29.0),
-            fixed_monthly_costs=params.get("fixed_monthly_costs", 5000.0),
-            variable_cost_margin=params.get("variable_cost_margin", 0.15),
-            estimated_growth_rate=params.get("estimated_growth_rate", 0.08),
-            initial_investment=params.get("initial_investment", 25000.0),
-            starting_customers=params.get("starting_customers", 50)
+
+        # Step 2: Compile the structured JSON output from the draft
+        synthesis_prompt = (
+            f"Draft financial summary:\n{draft_response.text}\n\n"
+            "Compile the complete Financial Projections module conforming to the schema."
         )
-        
-        # Step 3: Synthesis final structured report
-        report_prompt = (
-            f"Business Idea: {idea}\n"
-            f"Planner Directives: {planner_instructions}\n"
-            f"Simulation Parameters Used: {params}\n"
-            f"Simulation Math Output: {sim_results}\n\n"
-            "Create a clean, detailed financial analysis report that reflects the mathematical projections."
-        )
-        
+
         report = self.generate_structured(
             system_instruction=self.system_instruction,
-            user_content=report_prompt,
+            user_content=synthesis_prompt,
             response_schema=FinanceOutputSchema
         )
         
