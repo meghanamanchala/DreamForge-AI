@@ -17,44 +17,128 @@
     <!-- ----------------- LANDING PAGE ----------------- -->
     <section id="landingPage" class="view-panel active">
         <header class="landing-header">
-            <div class="logo">
+            <div class="logo" onclick="location.reload()">
                 <i data-lucide="orbit" class="accent-glow"></i>
                 <span>DreamForge AI</span>
             </div>
-            <button class="glass-btn" onclick="navigateTo('dashboard')">Launch App</button>
+            <nav class="landing-nav">
+                <a href="#how">How it works</a>
+                <a href="#agents">Agents</a>
+                <a href="#testimonials">Testimonials</a>
+                <a href="#faq">FAQ</a>
+            </nav>
+            <button class="primary-btn" onclick="navigateTo('dashboard')">Open App</button>
         </header>
 
+        <!-- Hero Section -->
         <div class="landing-hero">
             <h1 class="hero-title animate-gradient">Turn Ideas Into Startups<br>With AI Agents</h1>
-            <p class="hero-subtitle">DreamForge AI uses specialized AI agents to research, analyze, validate, and plan your business idea in minutes.</p>
+            <p class="hero-subtitle">DreamForge AI uses specialized AI agents to research, analyze, validate and plan your business idea in minutes — not months.</p>
             <div class="hero-actions">
                 <button class="primary-btn" onclick="navigateTo('newAnalysis')">Start Building <i data-lucide="arrow-right"></i></button>
-                <button class="secondary-btn" onclick="alert('Feature coming soon! Explore our Agent Workspace or Pitch your idea to get started.')">Watch Demo <i data-lucide="play"></i></button>
+                <button class="secondary-btn" onclick="navigateTo('dashboard')">Launch Dashboard <i data-lucide="layout"></i></button>
             </div>
         </div>
 
-        <div class="landing-sections">
-            <div class="info-card glass-card">
-                <h3><i data-lucide="workflow"></i> How It Works</h3>
-                <ol>
-                    <li>Submit your startup pitch.</li>
-                    <li>Agents validation & competitive checks.</li>
-                    <li>Reviewer critique & iterations loops.</li>
-                    <li>Download investor-ready blueprints.</li>
-                </ol>
-            </div>
-            <div class="info-card glass-card">
-                <h3><i data-lucide="users"></i> C-Suite AI Team</h3>
-                <div class="team-grid">
-                    <span>🛡️ Security</span>
-                    <span>📋 Planner</span>
-                    <span>🔍 Research</span>
-                    <span>💰 Finance</span>
-                    <span>📣 Marketing</span>
-                    <span>⚖️ Reviewer</span>
+        <!-- 3-Steps Section -->
+        <section id="how" class="steps-section">
+            <h2 class="section-title">From idea to blueprint in 3 steps</h2>
+            <div class="steps-grid">
+                <div class="step-card glass-card">
+                    <span class="step-num">01</span>
+                    <h3>Describe your idea</h3>
+                    <p>Drop in a one-line idea or a detailed pitch brief — DreamForge handles the rest, analyzing your concept contextually.</p>
+                </div>
+                <div class="step-card glass-card">
+                    <span class="step-num">02</span>
+                    <h3>Agents collaborate</h3>
+                    <p>Six specialized C-suite AI agents research, validate, simulate finances, and review the draft documents in loops.</p>
+                </div>
+                <div class="step-card glass-card">
+                    <span class="step-num">03</span>
+                    <h3>Get your blueprint</h3>
+                    <p>Receive a comprehensive founder-grade business report with scores, market size projections, and a GTM roadmap.</p>
                 </div>
             </div>
+        </section>
+
+        <!-- AI Agent C-Suite Section -->
+        <section id="agents" class="agents-section">
+            <h2 class="section-title">Meet your AI agent team</h2>
+            <div class="agents-grid-landing">
+                <div class="agent-landing-card security glass-card">
+                    <div class="agent-icon-wrapper">🛡️</div>
+                    <h3>Security Agent</h3>
+                    <span class="agent-role">CISO & Safety Compliance</span>
+                    <p class="agent-desc">Validates input & ensures safety. Screens startup ideas for legal compliance, IP risk, and policy violations before entering pipeline.</p>
+                </div>
+                <div class="agent-landing-card planner glass-card">
+                    <div class="agent-icon-wrapper">📋</div>
+                    <h3>Planner Agent</h3>
+                    <span class="agent-role">CEO & Strategy Architect</span>
+                    <p class="agent-desc">Designs the business canvas model drafts. Decomposes startup pitches and schedules tasks dynamically for execution.</p>
+                </div>
+                <div class="agent-landing-card research glass-card">
+                    <div class="agent-icon-wrapper">🔍</div>
+                    <h3>Research Agent</h3>
+                    <span class="agent-role">VP of Market Intelligence</span>
+                    <p class="agent-desc">Analyzes target competitors and market sizes. Pulls web metrics and maps competitive threats and entry barriers.</p>
+                </div>
+                <div class="agent-landing-card finance glass-card">
+                    <div class="agent-icon-wrapper">💰</div>
+                    <h3>Finance Agent</h3>
+                    <span class="agent-role">CFO & Quantitative Modeler</span>
+                    <p class="agent-desc">Models operating unit economics. Generates 3-year projections, CAC boundaries, and deterministic break-even calculations.</p>
+                </div>
+                <div class="agent-landing-card marketing glass-card">
+                    <div class="agent-icon-wrapper">📣</div>
+                    <h3>Marketing Agent</h3>
+                    <span class="agent-role">CMO & Brand Growth Director</span>
+                    <p class="agent-desc">Crafts the branding campaign messaging. Designs GTM customer acquisition channels, timelines, and value propositions.</p>
+                </div>
+                <div class="agent-landing-card reviewer glass-card">
+                    <div class="agent-icon-wrapper">⚖️</div>
+                    <h3>Reviewer Agent</h3>
+                    <span class="agent-role">Venture Reviewer & Judge</span>
+                    <p class="agent-desc">Audits all segments programmatically. Scores completeness and feasibility, and triggers dynamic rework iterations.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section id="testimonials" class="testimonials-section">
+            <h2 class="section-title">What founders are saying</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card glass-card">
+                    <div class="quote-icon">“</div>
+                    <p class="testimonial-text">Validated my SaaS idea in 8 minutes. Saved me a $20K consultant check.</p>
+                    <span class="testimonial-author">— SaaS Tech Founder</span>
+                </div>
+                <div class="testimonial-card glass-card">
+                    <div class="quote-icon">“</div>
+                    <p class="testimonial-text">The 90-day GTM campaign playbook was sharper than what our YC partner feedback gave us.</p>
+                    <span class="testimonial-author">— YC Incubator Graduate</span>
+                </div>
+                <div class="testimonial-card glass-card">
+                    <div class="quote-icon">“</div>
+                    <p class="testimonial-text">It is literally a venture studio in a single browser tab. Amazing multi-agent coordination.</p>
+                    <span class="testimonial-author">— Serial Builder</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bottom CTA -->
+        <div class="landing-hero" id="faq" style="height: 45vh;">
+            <h2 class="section-title" style="margin-bottom: 1.5rem;">Your next startup is one prompt away</h2>
+            <p class="hero-subtitle">Spin up your team of specialized AI agents and forge your idea into a blueprint today.</p>
+            <button class="primary-btn launch-btn" onclick="navigateTo('newAnalysis')" style="max-width: 300px;">Launch DreamForge <i data-lucide="zap"></i></button>
         </div>
+
+        <!-- Footer -->
+        <footer class="landing-footer">
+            <span>© 2026 DreamForge AI. All rights reserved.</span>
+            <span>Google Intensive AI Agents Cohort MVP</span>
+        </footer>
     </section>
 
     <!-- ----------------- APP SHELL ----------------- -->
@@ -82,11 +166,15 @@
                     <i data-lucide="history"></i> History
                 </button>
             </nav>
-            <div class="sidebar-status glass-card">
-                <div class="status-indicator">
-                    <span class="pulse-dot"></span>
-                    <span>System Online</span>
+            <div class="sidebar-credits">
+                <div class="credits-header">
+                    <span>Usage Credits</span>
+                    <span class="pro-tag">PRO</span>
                 </div>
+                <div class="credits-bar-wrapper">
+                    <div class="credits-bar" style="width: 75%;"></div>
+                </div>
+                <span class="credits-text">182 / 240 analyses left</span>
             </div>
         </aside>
 
