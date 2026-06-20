@@ -128,7 +128,7 @@
         </section>
 
         <!-- Bottom CTA -->
-        <div class="landing-hero" id="faq" style="height: 45vh;">
+        <div class="landing-cta" id="faq">
             <h2 class="section-title" style="margin-bottom: 1.5rem;">Your next startup is one prompt away</h2>
             <p class="hero-subtitle">Spin up your team of specialized AI agents and forge your idea into a blueprint today.</p>
             <button class="primary-btn launch-btn" onclick="navigateTo('newAnalysis')" style="max-width: 300px;">Launch DreamForge <i data-lucide="zap"></i></button>
@@ -145,44 +145,83 @@
     <main id="appShell" class="app-layout view-panel">
         <!-- Sidebar Navigation -->
         <aside class="sidebar">
-            <div class="logo sidebar-logo" onclick="navigateTo('landing')">
-                <i data-lucide="orbit" class="accent-glow"></i>
-                <span>DreamForge AI</span>
+            <!-- Logo -->
+            <div class="sidebar-logo-wrap" onclick="navigateTo('landing')">
+                <div class="sidebar-logo-icon">
+                    <i data-lucide="orbit"></i>
+                </div>
+                <span class="sidebar-brand">DreamForge<span class="brand-ai">.AI</span></span>
             </div>
+
+            <!-- Nav items -->
             <nav class="sidebar-menu">
                 <button class="nav-item active" data-target="dashboard" onclick="navigateTo('dashboard')">
-                    <i data-lucide="layout-dashboard"></i> Dashboard
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
                 </button>
                 <button class="nav-item" data-target="newAnalysis" onclick="navigateTo('newAnalysis')">
-                    <i data-lucide="plus-circle"></i> New Analysis
+                    <i data-lucide="sparkles"></i>
+                    <span>New Analysis</span>
                 </button>
                 <button class="nav-item" data-target="agentWorkspace" onclick="navigateTo('agentWorkspace')">
-                    <i data-lucide="network"></i> Agent Workspace
+                    <i data-lucide="bot"></i>
+                    <span>Agent Workspace</span>
                 </button>
-                <button class="nav-item" data-target="agentDetails" onclick="navigateTo('agentDetails')">
-                    <i data-lucide="user-cog"></i> Agent C-Suite
+                <button class="nav-item" data-target="agentWorkspace" onclick="navigateTo('agentWorkspace')">
+                    <i data-lucide="activity"></i>
+                    <span>Live Execution</span>
                 </button>
                 <button class="nav-item" data-target="history" onclick="navigateTo('history')">
-                    <i data-lucide="history"></i> History
+                    <i data-lucide="file-text"></i>
+                    <span>Reports</span>
+                </button>
+                <button class="nav-item" data-target="agentDetails" onclick="navigateTo('agentDetails')">
+                    <i data-lucide="users"></i>
+                    <span>Agents</span>
+                </button>
+                <button class="nav-item" data-target="history" onclick="navigateTo('history')">
+                    <i data-lucide="clock"></i>
+                    <span>History</span>
+                </button>
+                <button class="nav-item" data-target="dashboard" onclick="navigateTo('dashboard')">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
                 </button>
             </nav>
-            <div class="sidebar-credits">
-                <div class="credits-header">
-                    <span>Usage Credits</span>
-                    <span class="pro-tag">PRO</span>
-                </div>
+
+            <!-- Bottom Workspace + Credits block -->
+            <div class="sidebar-workspace-block">
+                <span class="workspace-label">Workspace</span>
+                <span class="workspace-name">Nova Labs <span class="workspace-pro">· Pro</span></span>
                 <div class="credits-bar-wrapper">
-                    <div class="credits-bar" style="width: 75%;"></div>
+                    <div class="credits-bar-fill"></div>
                 </div>
-                <span class="credits-text">182 / 240 analyses left</span>
+                <span class="credits-count">182 / 240 credits</span>
             </div>
         </aside>
 
-        <!-- Dynamic Main Content Panels -->
-        <section class="main-content">
+        <!-- Right Column: Topbar + Content -->
+        <div class="right-column">
+            <!-- Top Header Bar -->
+            <header class="app-topbar">
+                <div class="topbar-search">
+                    <i data-lucide="search"></i>
+                    <input type="text" placeholder="Search analyses, agents, reports..." id="topbarSearch" />
+                </div>
+                <div class="topbar-actions">
+                    <button class="topbar-icon-btn" title="Notifications">
+                        <i data-lucide="bell"></i>
+                    </button>
+                    <div class="topbar-avatar">N</div>
+                </div>
+            </header>
+
+            <!-- Dynamic Main Content Panels -->
+            <section class="main-content">
             <!-- 1. DASHBOARD VIEW -->
             <div id="dashboardView" class="sub-view active">
                 <h2 class="view-title">Dashboard</h2>
+                <p class="view-subtitle">Your startup incubator at a glance.</p>
                 <div class="metrics-grid">
                     <div class="metric-card glass-card">
                         <span class="metric-label">Analyses Generated</span>
@@ -220,42 +259,85 @@
 
             <!-- 2. NEW STARTUP ANALYSIS VIEW -->
             <div id="newAnalysisView" class="sub-view">
-                <h2 class="view-title">Forge New Startup</h2>
-                <div class="form-container glass-card">
-                    <div class="form-group">
-                        <label for="startupIdea">Describe your startup idea</label>
-                        <textarea id="startupIdea" placeholder="e.g. A hyper-local logistics platform delivering freshly brewed organic coffee to developers at their desks within 10 minutes."></textarea>
+                <p class="view-page-label">New Analysis</p>
+                <h2 class="view-title">Describe your startup idea</h2>
+                <p class="view-subtitle">Our agents will validate, research and blueprint it in minutes.</p>
+
+                <div class="new-analysis-card glass-card">
+                    <!-- YOUR IDEA label + textarea -->
+                    <div class="idea-label">YOUR IDEA</div>
+                    <textarea id="startupIdea" class="idea-textarea" placeholder="e.g. A hyper-local logistics platform delivering freshly brewed organic coffee to developers at their desks within 10 minutes."></textarea>
+
+                    <!-- Suggestion pills -->
+                    <div class="suggestion-pills">
+                        <button class="suggestion-pill" onclick="useExample('A sustainable clothing brand using recycled ocean plastics')">
+                            <i data-lucide="sparkles"></i> A sustainable clothing brand using recycled ocean plastics
+                        </button>
+                        <button class="suggestion-pill" onclick="useExample('An AI-powered fitness coach for new mothers')">
+                            <i data-lucide="sparkles"></i> An AI-powered fitness coach for new mothers
+                        </button>
+                        <button class="suggestion-pill" onclick="useExample('An online tutoring marketplace connecting retirees with kids')">
+                            <i data-lucide="sparkles"></i> An online tutoring marketplace connecting retirees with kids
+                        </button>
                     </div>
-                    <div class="form-examples">
-                        <span>Try:</span>
-                        <button class="example-tag" onclick="useExample('AI-powered automated fitness coach with computer vision posture check')">AI Fitness Coach</button>
-                        <button class="example-tag" onclick="useExample('Sustainable decentralized clothing marketplace using recycled fabrics')">Eco Fashion Store</button>
-                    </div>
-                    
-                    <div class="options-grid">
+
+                    <!-- 4-column dropdowns -->
+                    <div class="analysis-options-row">
                         <div class="form-group">
-                            <label for="ideaMarket">Target Market / Location</label>
-                            <input type="text" id="ideaMarket" value="Global" placeholder="e.g. Tech hubs, Europe, Local City">
-                        </div>
-                        <div class="form-group">
-                            <label for="ideaIndustry">Industry Segment</label>
+                            <label>Industry</label>
                             <select id="ideaIndustry">
+                                <option value="SaaS">SaaS</option>
                                 <option value="B2B SaaS">B2B SaaS</option>
                                 <option value="Consumer Tech">Consumer Tech</option>
                                 <option value="FinTech">FinTech</option>
-                                <option value="Logistics/E-comm">Logistics & E-Commerce</option>
-                                <option value="Health/BioTech">Health & Biotech</option>
+                                <option value="Logistics/E-comm">Logistics &amp; E-Commerce</option>
+                                <option value="Health/BioTech">Health &amp; Biotech</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Budget Range</label>
+                            <select id="ideaBudget">
+                                <option>&lt; $10K</option>
+                                <option>$10K – $50K</option>
+                                <option>$50K – $200K</option>
+                                <option>$200K+</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Target Market</label>
+                            <select id="ideaMarketType">
+                                <option>Consumer (B2C)</option>
+                                <option>Business (B2B)</option>
+                                <option>Global</option>
+                                <option>Local</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Stage</label>
+                            <select id="ideaStage">
+                                <option>Idea</option>
+                                <option>MVP</option>
+                                <option>Early Traction</option>
+                                <option>Scaling</option>
                             </select>
                         </div>
                     </div>
-                    
-                    <button class="primary-btn launch-btn" onclick="submitStartupAnalysis()">Launch DreamForge <i data-lucide="zap"></i></button>
+
+                    <!-- Footer row: run time + launch button -->
+                    <div class="analysis-footer-row">
+                        <span class="run-time-label">Avg. run time &middot; 3&ndash;7 min</span>
+                        <button class="launch-btn-full" onclick="submitStartupAnalysis()">
+                            <i data-lucide="rocket"></i> Launch DreamForge
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <!-- 3. AGENT WORKSPACE VIEW -->
             <div id="agentWorkspaceView" class="sub-view">
-                <h2 class="view-title">Agent Workspace Pipeline</h2>
+                <p class="view-page-label">Agent Workspace</p>
+                <h2 class="view-title">Multi-agent pipeline</h2>
+                <p class="view-subtitle">Watch your agents collaborate in real-time.</p>
                 
                 <!-- Dynamic Pipeline Layout -->
                 <div class="pipeline-wrapper glass-card">
@@ -490,6 +572,7 @@
                 </div>
             </div>
         </section>
+        </div><!-- /right-column -->
     </main>
 
     <!-- App Logic Scripts -->

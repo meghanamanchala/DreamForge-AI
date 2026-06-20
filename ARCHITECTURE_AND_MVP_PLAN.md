@@ -70,7 +70,7 @@ graph TD
 ## 3. Class Design
 
 ### 3.1 BaseAgent Class
-Located in [agents/base.py](file:///c:/Users/megha/OneDrive/文档/DreamForge-AI/agents/base.py), this class wraps the modern Google GenAI SDK.
+Located in [agents/base.py], this class wraps the modern Google GenAI SDK.
 - **Methods**:
   - `generate_text(system_instruction, user_content)`: Performs unstructured chat/completion tasks.
   - `generate_structured(system_instruction, user_content, response_schema)`: Generates strict JSON outputs matching a defined Pydantic validation schema.
