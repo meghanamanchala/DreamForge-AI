@@ -25,7 +25,7 @@ class PlannerOutputSchema(BaseModel):
     )
 
 class PlannerAgent(BaseAgent):
-    def __init__(self, client, model="gemini-flash-latest"):
+    def __init__(self, client, model="gemini-3.1-flash-lite"):
         super().__init__(client, model)
         self.system_instruction = (
             "You are the Chief Executive Officer (CEO) and Lead Planner of DreamForge AI.\n"

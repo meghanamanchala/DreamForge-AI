@@ -4,11 +4,11 @@ import json
 import time
 
 class BaseAgent:
-    def __init__(self, client, model="gemini-flash-latest"):
+    def __init__(self, client, model="gemini-3.1-flash-lite"):
         """
         Base agent class.
         :param client: An initialized google-genai Client instance.
-        :param model: The Gemini model name (e.g., 'gemini-flash-latest' or 'gemini-2.5-flash').
+        :param model: The Gemini model name (e.g., 'gemini-3.1-flash-lite' or 'gemini-2.5-flash').
         """
         self.client = client
         self.model = model
