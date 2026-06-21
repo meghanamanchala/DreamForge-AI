@@ -3,7 +3,7 @@ import os
 from tools.mcp_registry import mcp_registry
 from pydantic import BaseModel, Field
 try:
-    from duckduckgo_search import DDGS  # type: ignore
+    from ddgs import DDGS  # type: ignore
 except ImportError:
     DDGS = None
 
@@ -54,7 +54,7 @@ def web_search(query: str, tavily_api_key: Optional[str] = None, max_results: in
             
     # DuckDuckGo fallback
     if DDGS is None:
-        print("DuckDuckGo search module is not installed. Install with 'pip install duckduckgo-search'.")
+        print("DDGS search module is not installed. Install with 'pip install ddgs'.")
         return []
 
     try:
