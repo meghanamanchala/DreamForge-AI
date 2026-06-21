@@ -270,7 +270,7 @@ async function submitStartupAnalysis() {
     }
 }
 
-// ----------------- AGENT WORKSPACE POLLE -----------------
+// ----------------- AGENT WORKSPACE POLLING -----------------
 function startWorkspaceTracking(sessionId) {
     // Reset workspace UI nodes
     resetWorkspaceNodes();
@@ -281,6 +281,17 @@ function startWorkspaceTracking(sessionId) {
     // Clear existing interval
     if (pollingInterval) clearInterval(pollingInterval);
     
+    // Fetch the idea text to show in the workspace pipeline header
+    fetch("/api/sessions")
+        .then(res => res.json())
+        .then(data => {
+            const session = (data.sessions || []).find(s => s.id === sessionId);
+            if (session) {
+                document.getElementById("pipeIdeaText").innerText = session.idea.substring(0, 100) + (session.idea.length > 100 ? "..." : "");
+            }
+        })
+        .catch(err => console.error("Error fetching sessions for idea label:", err));
+
     // Poll logs every 1.5 seconds
     pollingInterval = setInterval(async () => {
         try {
@@ -289,7 +300,7 @@ function startWorkspaceTracking(sessionId) {
             const logs = data.logs || [];
             const status = data.status || "started";
             
-            updateWorkspaceUI(logs, status);
+            updateWorkspaceUI(logs, status, sessionId);
             
             if (status === "completed") {
                 clearInterval(pollingInterval);
@@ -307,26 +318,59 @@ function startWorkspaceTracking(sessionId) {
 }
 
 function resetWorkspaceNodes() {
-    const nodes = ["nodeSecurity", "nodePlanner", "nodeResearch", "nodeFinance", "nodeMarketing", "nodeReviewer"];
-    nodes.forEach(n => {
-        const node = document.getElementById(n);
-        node.className = "pipeline-node";
-        node.querySelector(".node-status").innerText = "Waiting";
+    const agents = ["Security", "Planner", "Research", "Finance", "Marketing", "Reviewer"];
+    agents.forEach(agent => {
+        const node = document.getElementById("pipeNode-" + agent);
+        if (node) {
+            node.className = "pipeline-card-agent";
+            const indicator = node.querySelector(".status-indicator-icon");
+            if (indicator) indicator.innerHTML = `<i data-lucide="circle"></i>`;
+        }
+        
+        const card = document.getElementById("execCard-" + agent);
+        if (card) {
+            card.className = "exec-card glass-card waiting";
+            const pill = card.querySelector(".exec-status-pill");
+            if (pill) pill.textContent = "Waiting";
+            const fill = card.querySelector(".exec-progress-bar-fill");
+            if (fill) fill.style.width = "0%";
+            const logBox = document.getElementById("execLogs-" + agent);
+            if (logBox) logBox.innerText = agent === "Security" ? "Awaiting pipeline start..." : "Awaiting upstream outputs...";
+        }
     });
     
-    const conns = ["conn1", "conn2", "conn3", "conn4", "conn5", "conn6", "conn7"];
-    conns.forEach(c => {
-        document.getElementById(c).className = "pipeline-connection";
+    const arrows = ["arrow1", "arrow2", "arrow3", "arrow4", "arrow5", "arrow6", "arrow7"];
+    arrows.forEach(arrow => {
+        const arrowEl = document.getElementById(arrow);
+        if (arrowEl) arrowEl.className = "vertical-arrow";
     });
+    
+    const blueprintNode = document.getElementById("pipeNode-Blueprint");
+    if (blueprintNode) blueprintNode.className = "pipeline-card-blueprint";
+    
+    const blueprintStatus = document.getElementById("pipeBlueprintStatus");
+    if (blueprintStatus) blueprintStatus.innerText = "Final report assembling...";
+    
     document.getElementById("consoleProgress").innerText = "0% Complete";
+    const footerBtnRow = document.getElementById("workspaceFooterBtnRow");
+    if (footerBtnRow) footerBtnRow.style.display = "none";
+    
+    lucide.createIcons();
 }
 
-function updateWorkspaceUI(logs, status) {
+function updateWorkspaceUI(logs, status, sessionId) {
     const logBox = document.getElementById("consoleLogs");
     logBox.innerHTML = "";
     
-    let activeAgent = null;
-    let completedAgents = [];
+    const agentKeys = ["Security", "Planner", "Research", "Finance", "Marketing", "Reviewer"];
+    const agentLogsMap = {
+        "Security Agent": [],
+        "Planner Agent": [],
+        "Research Agent": [],
+        "Finance Agent": [],
+        "Marketing Agent": [],
+        "Reviewer Agent": []
+    };
     
     logs.forEach(log => {
         const time = new Date(log.timestamp).toLocaleTimeString();
@@ -335,74 +379,142 @@ function updateWorkspaceUI(logs, status) {
         entry.innerHTML = `<strong>[${time}] ${log.agent_name} ── ${log.step_name}:</strong> ${log.thoughts}`;
         logBox.appendChild(entry);
         
-        // Track states
-        const name = log.agent_name;
-        if (log.thoughts.includes("Completed") || log.thoughts.includes("Approved") || log.thoughts.includes("Cleared")) {
-            completedAgents.push(name);
-        } else {
-            activeAgent = name;
+        if (agentLogsMap[log.agent_name]) {
+            agentLogsMap[log.agent_name].push(
+                `<div class="log-entry"><strong>[${time}] ${log.step_name}:</strong> ${log.thoughts}</div>`
+            );
         }
     });
     
-    // Auto-scroll console
     logBox.scrollTop = logBox.scrollHeight;
     
-    // Node selectors map
-    const nodeMap = {
-        "Security Agent": "nodeSecurity",
-        "Planner Agent": "nodePlanner",
-        "Research Agent": "nodeResearch",
-        "Finance Agent": "nodeFinance",
-        "Marketing Agent": "nodeMarketing",
-        "Reviewer Agent": "nodeReviewer"
-    };
-
-    // Update node colors & connection lines based on logs
-    const completedNodeIds = completedAgents.map(name => nodeMap[name]).filter(Boolean);
-    const activeNodeId = nodeMap[activeAgent];
+    // Determine active index
+    let activeIndex = -1;
+    if (status === "started" || status === "security_checking") activeIndex = 0;
+    else if (status === "planning") activeIndex = 1;
+    else if (status.startsWith("researching_c")) activeIndex = 2;
+    else if (status.startsWith("financing_c")) activeIndex = 3;
+    else if (status.startsWith("marketing_c")) activeIndex = 4;
+    else if (status.startsWith("reviewing_c")) activeIndex = 5;
+    else if (status === "finalizing" || status === "completed") activeIndex = 6;
+    else if (status === "failed_security") activeIndex = 0;
     
-    // Highlight completed
-    completedNodeIds.forEach(id => {
-        const node = document.getElementById(id);
-        node.classList.add("completed");
-        node.classList.remove("running");
-        node.querySelector(".node-status").innerText = "Completed";
+    // Infer active index from logs to make it responsive
+    logs.forEach(log => {
+        let idx = -1;
+        if (log.agent_name === "Security Agent") idx = 0;
+        else if (log.agent_name === "Planner Agent") idx = 1;
+        else if (log.agent_name === "Research Agent") idx = 2;
+        else if (log.agent_name === "Finance Agent") idx = 3;
+        else if (log.agent_name === "Marketing Agent") idx = 4;
+        else if (log.agent_name === "Reviewer Agent") idx = 5;
+        
+        if (idx > activeIndex && activeIndex !== -1 && status !== "failed_security" && status !== "failed") {
+            activeIndex = idx;
+        }
     });
     
-    // Highlight active running
-    if (activeNodeId && !completedNodeIds.includes(activeNodeId)) {
-        const node = document.getElementById(activeNodeId);
-        node.classList.add("running");
-        node.classList.remove("completed");
-        node.querySelector(".node-status").innerText = "Running";
-    }
+    // Update individual agents status and logs
+    agentKeys.forEach((agent, i) => {
+        const leftNode = document.getElementById("pipeNode-" + agent);
+        const rightCard = document.getElementById("execCard-" + agent);
+        if (!leftNode || !rightCard) return;
+        
+        const statusPill = rightCard.querySelector(".exec-status-pill");
+        const progressFill = rightCard.querySelector(".exec-progress-bar-fill");
+        const indicatorIcon = leftNode.querySelector(".status-indicator-icon");
+        
+        let state = "waiting";
+        if (i < activeIndex) {
+            state = "completed";
+        } else if (i === activeIndex) {
+            if (status === "failed_security" || status === "failed") {
+                state = "failed";
+            } else {
+                state = "running";
+            }
+        }
+        
+        // Classes update
+        leftNode.className = "pipeline-card-agent " + state;
+        rightCard.className = "exec-card glass-card " + state;
+        
+        // Status text and icon
+        if (state === "completed") {
+            if (statusPill) statusPill.textContent = "Completed";
+            if (progressFill) progressFill.style.width = "100%";
+            if (indicatorIcon) indicatorIcon.innerHTML = `<i data-lucide="check-circle-2"></i>`;
+        } else if (state === "running") {
+            if (statusPill) statusPill.textContent = "Running";
+            if (progressFill) progressFill.style.width = "60%";
+            if (indicatorIcon) indicatorIcon.innerHTML = `<i data-lucide="clock"></i>`;
+        } else if (state === "failed") {
+            if (statusPill) statusPill.textContent = "Failed";
+            if (progressFill) progressFill.style.width = "0%";
+            if (indicatorIcon) indicatorIcon.innerHTML = `<i data-lucide="alert-circle"></i>`;
+        } else {
+            if (statusPill) statusPill.textContent = "Waiting";
+            if (progressFill) progressFill.style.width = "0%";
+            if (indicatorIcon) indicatorIcon.innerHTML = `<i data-lucide="circle"></i>`;
+        }
+        
+        // Update logs for this agent
+        const logsArray = agentLogsMap[agent + " Agent"];
+        const individualLogBox = document.getElementById("execLogs-" + agent);
+        if (individualLogBox) {
+            if (logsArray && logsArray.length > 0) {
+                individualLogBox.innerHTML = logsArray.join("");
+                individualLogBox.scrollTop = individualLogBox.scrollHeight;
+            } else {
+                if (state === "waiting") {
+                    individualLogBox.innerText = agent === "Security" ? "Awaiting pipeline start..." : "Awaiting upstream outputs...";
+                } else if (state === "running") {
+                    individualLogBox.innerText = "Initializing...";
+                }
+            }
+        }
+    });
     
     // Connect pipeline animations based on flow
-    if (completedNodeIds.includes("nodeSecurity")) {
-        document.getElementById("conn1").classList.add("flowing");
+    for (let i = 1; i <= 7; i++) {
+        const arrow = document.getElementById("arrow" + i);
+        if (arrow) {
+            if (activeIndex >= i) {
+                arrow.classList.add("flowing");
+            } else {
+                arrow.classList.remove("flowing");
+            }
+        }
     }
-    if (completedNodeIds.includes("nodePlanner")) {
-        document.getElementById("conn2").classList.add("flowing");
-    }
-    if (completedNodeIds.includes("nodeResearch")) {
-        document.getElementById("conn3").classList.add("flowing");
-    }
-    if (completedNodeIds.includes("nodeFinance")) {
-        document.getElementById("conn4").classList.add("flowing");
-    }
-    if (completedNodeIds.includes("nodeMarketing")) {
-        document.getElementById("conn5").classList.add("flowing");
-    }
-    if (completedNodeIds.includes("nodeReviewer")) {
-        document.getElementById("conn6").classList.add("flowing");
-        document.getElementById("conn7").classList.add("flowing");
-        document.getElementById("nodeBlueprint").classList.add("completed");
+    
+    const blueprintNode = document.getElementById("pipeNode-Blueprint");
+    const blueprintStatus = document.getElementById("pipeBlueprintStatus");
+    if (activeIndex >= 6) {
+        if (blueprintNode) blueprintNode.classList.add("completed");
+        if (blueprintStatus) blueprintStatus.innerText = "Blueprint Sealed";
+        
+        // Show report button
+        const footerBtnRow = document.getElementById("workspaceFooterBtnRow");
+        if (footerBtnRow) {
+            footerBtnRow.style.display = "flex";
+            const btn = document.getElementById("btnViewReport");
+            if (btn) btn.onclick = () => viewSessionBlueprint(sessionId);
+        }
+    } else {
+        if (blueprintNode) blueprintNode.classList.remove("completed");
+        if (blueprintStatus) blueprintStatus.innerText = "Final report assembling...";
+        const footerBtnRow = document.getElementById("workspaceFooterBtnRow");
+        if (footerBtnRow) footerBtnRow.style.display = "none";
     }
     
     // Progress calculation estimate
-    let progress = Math.min(completedNodeIds.length * 16, 95);
+    let progress = Math.min(activeIndex * 16, 95);
     if (status === "completed") progress = 100;
-    document.getElementById("consoleProgress").innerText = `${progress}% Complete`;
+    const consoleProg = document.getElementById("consoleProgress");
+    if (consoleProg) consoleProg.innerText = `${progress}% Complete`;
+    
+    // Re-render updated indicator icons
+    lucide.createIcons();
 }
 
 // ----------------- LOAD & VIEW REPORT -----------------
@@ -415,6 +527,9 @@ async function viewSessionBlueprint(sessionId) {
         }
         
         const data = await response.json();
+        
+        // Save globally to support download export
+        window.currentBlueprintExportData = data;
         
         // Show report panel view
         navigateTo("report");
