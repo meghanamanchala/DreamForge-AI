@@ -12,12 +12,14 @@ class WebSearchInputs(BaseModel):
     tavily_api_key: str = Field(default=None, description="Optional Tavily API key.")
     max_results: int = Field(default=5, description="Number of search hits to fetch.")
 
+from typing import Optional, List, Dict, Any
+
 @mcp_registry.register(
     name="web_search",
     description="Searches the web for competitors, trends, and market statistics.",
     input_schema=WebSearchInputs
 )
-def web_search(query, tavily_api_key=None, max_results=5):
+def web_search(query: str, tavily_api_key: Optional[str] = None, max_results: int = 5) -> List[Dict[str, Any]]:
     """
     Searches the web for relevant market information.
     Falls back to DuckDuckGo search if Tavily API key is not present.

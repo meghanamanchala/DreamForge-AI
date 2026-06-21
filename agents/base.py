@@ -4,16 +4,40 @@ import json
 import time
 
 class BaseAgent:
-    def __init__(self, client, model="gemini-2.5-flash"):
+    def __init__(self, client, model="gemini-flash-latest"):
         """
         Base agent class.
         :param client: An initialized google-genai Client instance.
-        :param model: The Gemini model name (e.g., 'gemini-2.5-flash' or 'gemini-2.5-pro').
+        :param model: The Gemini model name (e.g., 'gemini-flash-latest' or 'gemini-2.5-flash').
         """
         self.client = client
         self.model = model
         self.last_tokens_used = 0
         self.last_latency_ms = 0
+
+    def _execute_with_retry(self, contents, config):
+        """Helper to invoke Gemini API with automatic 429 rate limit retry backoffs."""
+        max_retries = 5
+        base_delay = 6.0
+        
+        for attempt in range(max_retries):
+            try:
+                response = self.client.models.generate_content(
+                    model=self.model,
+                    contents=contents,
+                    config=config
+                )
+                return response
+            except Exception as e:
+                err_msg = str(e).lower()
+                is_rate_limit = "429" in err_msg or "resource_exhausted" in err_msg or "quota" in err_msg or "limit" in err_msg
+                
+                if is_rate_limit and attempt < max_retries - 1:
+                    sleep_time = base_delay * (1.5 ** attempt) # Backoff: 6s, 9s, 13.5s, 20.25s
+                    print(f"[RATE LIMIT 429] Free Tier rate limit hit. Retrying in {sleep_time:.2f}s... (Attempt {attempt+1}/{max_retries})")
+                    time.sleep(sleep_time)
+                else:
+                    raise e
 
     def generate_text(self, system_instruction, user_content):
         """Generates standard unstructured text response."""
@@ -23,8 +47,7 @@ class BaseAgent:
                 temperature=0.7,
             )
             start_time = time.time()
-            response = self.client.models.generate_content(
-                model=self.model,
+            response = self._execute_with_retry(
                 contents=user_content,
                 config=config
             )
@@ -47,8 +70,7 @@ class BaseAgent:
                 temperature=0.2, # Lower temperature for structured extraction accuracy
             )
             start_time = time.time()
-            response = self.client.models.generate_content(
-                model=self.model,
+            response = self._execute_with_retry(
                 contents=user_content,
                 config=config
             )
@@ -80,8 +102,7 @@ class BaseAgent:
             
             while True:
                 start_time = time.time()
-                response = self.client.models.generate_content(
-                    model=self.model,
+                response = self._execute_with_retry(
                     contents=contents,
                     config=config
                 )

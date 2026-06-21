@@ -10,20 +10,22 @@ class FinancialSimInputs(BaseModel):
     initial_investment: float = Field(default=25000.0, description="Starting cash capital.")
     starting_customers: int = Field(default=50, description="Customer volume at launch month.")
 
+from typing import Dict, Any
+
 @mcp_registry.register(
     name="run_financial_simulation",
     description="Simulates a 3-year (36-month) operational cash ledger showing yearly summaries and break-even targets.",
     input_schema=FinancialSimInputs
 )
 def run_financial_simulation(
-    pricing_model="subscription",
-    pricing_point=29.0,
-    fixed_monthly_costs=5000.0,
-    variable_cost_margin=0.15,
-    estimated_growth_rate=0.08,
-    initial_investment=25000.0,
-    starting_customers=50
-):
+    pricing_model: str = "subscription",
+    pricing_point: float = 29.0,
+    fixed_monthly_costs: float = 5000.0,
+    variable_cost_margin: float = 0.15,
+    estimated_growth_rate: float = 0.08,
+    initial_investment: float = 25000.0,
+    starting_customers: int = 50
+) -> Dict[str, Any]:
     """
     Computes a rigorous 36-month startup cash trajectory and business P&L sheet.
     Returns: Dict containing summary metrics, yearly aggregated tables, and full monthly projections.

@@ -167,15 +167,15 @@
                     <i data-lucide="bot"></i>
                     <span>Agent Workspace</span>
                 </button>
-                <button class="nav-item" data-target="agentWorkspace" onclick="navigateTo('agentWorkspace')">
+                <button class="nav-item" data-target="liveExecution" onclick="navigateTo('liveExecution')">
                     <i data-lucide="activity"></i>
                     <span>Live Execution</span>
                 </button>
-                <button class="nav-item" data-target="history" onclick="navigateTo('history')">
+                <button class="nav-item" data-target="report" onclick="navigateTo('report')">
                     <i data-lucide="file-text"></i>
                     <span>Reports</span>
                 </button>
-                <button class="nav-item" data-target="agentDetails" onclick="navigateTo('agentDetails')">
+                <button class="nav-item" data-target="agents" onclick="navigateTo('agents')">
                     <i data-lucide="users"></i>
                     <span>Agents</span>
                 </button>
@@ -183,7 +183,7 @@
                     <i data-lucide="clock"></i>
                     <span>History</span>
                 </button>
-                <button class="nav-item" data-target="dashboard" onclick="navigateTo('dashboard')">
+                <button class="nav-item" data-target="settings" onclick="navigateTo('settings')">
                     <i data-lucide="settings"></i>
                     <span>Settings</span>
                 </button>
@@ -220,33 +220,152 @@
             <section class="main-content">
             <!-- 1. DASHBOARD VIEW -->
             <div id="dashboardView" class="sub-view active">
-                <h2 class="view-title">Dashboard</h2>
-                <p class="view-subtitle">Your startup incubator at a glance.</p>
+                <div class="view-header-row">
+                    <div>
+                        <p class="view-welcome-text">Welcome back, Nova</p>
+                        <h2 class="view-title">Dashboard</h2>
+                        <p class="view-subtitle">Your agent team has been busy. Here's the pulse.</p>
+                    </div>
+                    <button class="primary-btn dashboard-action-btn" onclick="navigateTo('newAnalysis')">
+                        <i data-lucide="plus"></i> New Analysis
+                    </button>
+                </div>
+
+                <!-- 4 Metrics Row -->
                 <div class="metrics-grid">
                     <div class="metric-card glass-card">
-                        <span class="metric-label">Analyses Generated</span>
+                        <div class="metric-card-top">
+                            <div class="metric-icon-wrap bg-purple-glow">
+                                <i data-lucide="sparkles"></i>
+                            </div>
+                            <span class="metric-trend-tag positive">+12%</span>
+                        </div>
                         <h3 class="metric-value" id="statAnalyses">0</h3>
+                        <span class="metric-label">Analyses Generated</span>
                     </div>
+
                     <div class="metric-card glass-card">
-                        <span class="metric-label">Active C-Suite Agents</span>
-                        <h3 class="metric-value">6</h3>
+                        <div class="metric-card-top">
+                            <div class="metric-icon-wrap bg-blue-glow">
+                                <i data-lucide="bot"></i>
+                            </div>
+                            <span class="metric-trend-tag info">Live</span>
+                        </div>
+                        <h3 class="metric-value" id="statActiveAgents">6</h3>
+                        <span class="metric-label">Active Agents</span>
                     </div>
+
                     <div class="metric-card glass-card">
-                        <span class="metric-label">Avg Readiness Score</span>
-                        <h3 class="metric-value">84%</h3>
+                        <div class="metric-card-top">
+                            <div class="metric-icon-wrap bg-cyan-glow">
+                                <i data-lucide="gauge"></i>
+                            </div>
+                            <span class="metric-trend-tag positive">+4 pts</span>
+                        </div>
+                        <h3 class="metric-value" id="statReadiness">84%</h3>
+                        <span class="metric-label">Avg. Readiness Score</span>
+                    </div>
+
+                    <div class="metric-card glass-card">
+                        <div class="metric-card-top">
+                            <div class="metric-icon-wrap bg-pink-glow">
+                                <i data-lucide="file-text"></i>
+                            </div>
+                            <span class="metric-trend-tag positive">+9%</span>
+                        </div>
+                        <h3 class="metric-value" id="statReports">0</h3>
+                        <span class="metric-label">Reports Created</span>
                     </div>
                 </div>
 
+                <!-- Two-Column Chart & Live Status Grid -->
+                <div class="dashboard-charts-grid">
+                    <!-- Pipeline Throughput Line Chart -->
+                    <div class="dashboard-chart-card glass-card">
+                        <div class="card-header-row">
+                            <div>
+                                <span class="card-tag">ACTIVITY</span>
+                                <h3 class="card-title">Pipeline throughput</h3>
+                            </div>
+                            <span class="trend-indicator"><i data-lucide="trending-up"></i> +28% vs last month</span>
+                        </div>
+                        <div class="chart-canvas-wrap">
+                            <canvas id="throughputChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Agents Live Status -->
+                    <div class="dashboard-agents-card glass-card">
+                        <div class="card-header-row">
+                            <div>
+                                <span class="card-tag">AGENTS</span>
+                                <h3 class="card-title">Live status</h3>
+                            </div>
+                        </div>
+                        <div class="agents-status-list">
+                            <div class="agent-status-row" id="dashStatus-Security">
+                                <div class="agent-name-group">
+                                    <span class="status-indicator-dot running"></span>
+                                    <span class="agent-name">Security Agent</span>
+                                </div>
+                                <span class="agent-status-label">Running</span>
+                            </div>
+                            <div class="agent-status-row" id="dashStatus-Planner">
+                                <div class="agent-name-group">
+                                    <span class="status-indicator-dot idle"></span>
+                                    <span class="agent-name">Planner Agent</span>
+                                </div>
+                                <span class="agent-status-label">Idle</span>
+                            </div>
+                            <div class="agent-status-row" id="dashStatus-Research">
+                                <div class="agent-name-group">
+                                    <span class="status-indicator-dot idle"></span>
+                                    <span class="agent-name">Research Agent</span>
+                                </div>
+                                <span class="agent-status-label">Idle</span>
+                            </div>
+                            <div class="agent-status-row" id="dashStatus-Finance">
+                                <div class="agent-name-group">
+                                    <span class="status-indicator-dot running"></span>
+                                    <span class="agent-name">Finance Agent</span>
+                                </div>
+                                <span class="agent-status-label">Running</span>
+                            </div>
+                            <div class="agent-status-row" id="dashStatus-Marketing">
+                                <div class="agent-name-group">
+                                    <span class="status-indicator-dot idle"></span>
+                                    <span class="agent-name">Marketing Agent</span>
+                                </div>
+                                <span class="agent-status-label">Idle</span>
+                            </div>
+                            <div class="agent-status-row" id="dashStatus-Reviewer">
+                                <div class="agent-name-group">
+                                    <span class="status-indicator-dot idle"></span>
+                                    <span class="agent-name">Reviewer Agent</span>
+                                </div>
+                                <span class="agent-status-label">Idle</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Projects -->
                 <div class="projects-section glass-card">
-                    <h3>Recent Startup Projects</h3>
+                    <div class="projects-section-header">
+                        <h3 class="card-title">Recent projects</h3>
+                        <button class="view-all-link-btn" onclick="navigateTo('history')">
+                            View all <i data-lucide="arrow-up-right"></i>
+                        </button>
+                    </div>
                     <div class="table-container">
                         <table id="projectsTable">
                             <thead>
                                 <tr>
-                                    <th>Startup Concept</th>
-                                    <th>Target Region</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
+                                    <th>STARTUP</th>
+                                    <th>DATE</th>
+                                    <th>SCORE</th>
+                                    <th>STATUS</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -339,72 +458,246 @@
                 <h2 class="view-title">Multi-agent pipeline</h2>
                 <p class="view-subtitle">Watch your agents collaborate in real-time.</p>
                 
-                <!-- Dynamic Pipeline Layout -->
-                <div class="pipeline-wrapper glass-card">
-                    <div class="pipeline-nodes">
-                        <div class="pipeline-node start-node" id="nodeIdea">
-                            <i data-lucide="lightbulb"></i>
-                            <span>Idea Submitted</span>
+                <div class="workspace-two-col-layout">
+                    <!-- Left column: Vertical timeline -->
+                    <div class="workspace-sidebar-col">
+                        <!-- USER IDEA CARD -->
+                        <div class="pipeline-card-idea" id="pipeIdeaNode">
+                            <span class="pipe-card-label">USER IDEA</span>
+                            <p class="pipe-card-text" id="pipeIdeaText">A SaaS startup idea...</p>
                         </div>
                         
-                        <div class="pipeline-connection" id="conn1"><div class="flow-dot"></div></div>
+                        <div class="vertical-arrow" id="arrow1"><i data-lucide="arrow-down"></i></div>
                         
-                        <div class="pipeline-node" id="nodeSecurity">
-                            <i data-lucide="shield-check"></i>
-                            <span>Security Agent</span>
-                            <div class="node-status">Waiting</div>
+                        <!-- Security Agent -->
+                        <div class="pipeline-card-agent" id="pipeNode-Security">
+                            <div class="agent-info-left">
+                                <div class="pipe-agent-icon-wrap security-icon">
+                                    <i data-lucide="shield-check"></i>
+                                </div>
+                                <div>
+                                    <h4>Security Agent</h4>
+                                    <span>Validates input &amp; ensures safety</span>
+                                </div>
+                            </div>
+                            <span class="status-indicator-icon"><i data-lucide="circle"></i></span>
                         </div>
                         
-                        <div class="pipeline-connection" id="conn2"><div class="flow-dot"></div></div>
+                        <div class="vertical-arrow" id="arrow2"><i data-lucide="arrow-down"></i></div>
                         
-                        <div class="pipeline-node" id="nodePlanner">
-                            <i data-lucide="scroll"></i>
-                            <span>Planner Agent</span>
-                            <div class="node-status">Waiting</div>
+                        <!-- Planner Agent -->
+                        <div class="pipeline-card-agent" id="pipeNode-Planner">
+                            <div class="agent-info-left">
+                                <div class="pipe-agent-icon-wrap planner-icon">
+                                    <i data-lucide="scroll"></i>
+                                </div>
+                                <div>
+                                    <h4>Planner Agent</h4>
+                                    <span>Designs the business model</span>
+                                </div>
+                            </div>
+                            <span class="status-indicator-icon"><i data-lucide="circle"></i></span>
                         </div>
                         
-                        <div class="pipeline-connection" id="conn3"><div class="flow-dot"></div></div>
+                        <div class="vertical-arrow" id="arrow3"><i data-lucide="arrow-down"></i></div>
                         
-                        <div class="pipeline-node" id="nodeResearch">
-                            <i data-lucide="search"></i>
-                            <span>Research Agent</span>
-                            <div class="node-status">Waiting</div>
+                        <!-- Research Agent -->
+                        <div class="pipeline-card-agent" id="pipeNode-Research">
+                            <div class="agent-info-left">
+                                <div class="pipe-agent-icon-wrap research-icon">
+                                    <i data-lucide="search"></i>
+                                </div>
+                                <div>
+                                    <h4>Research Agent</h4>
+                                    <span>Analyzes market &amp; competitors</span>
+                                </div>
+                            </div>
+                            <span class="status-indicator-icon"><i data-lucide="circle"></i></span>
                         </div>
                         
-                        <div class="pipeline-connection" id="conn4"><div class="flow-dot"></div></div>
+                        <div class="vertical-arrow" id="arrow4"><i data-lucide="arrow-down"></i></div>
                         
-                        <div class="pipeline-node" id="nodeFinance">
-                            <i data-lucide="badge-dollar-sign"></i>
-                            <span>Finance Agent</span>
-                            <div class="node-status">Waiting</div>
+                        <!-- Finance Agent -->
+                        <div class="pipeline-card-agent" id="pipeNode-Finance">
+                            <div class="agent-info-left">
+                                <div class="pipe-agent-icon-wrap finance-icon">
+                                    <i data-lucide="badge-dollar-sign"></i>
+                                </div>
+                                <div>
+                                    <h4>Finance Agent</h4>
+                                    <span>Builds financial projections</span>
+                                </div>
+                            </div>
+                            <span class="status-indicator-icon"><i data-lucide="circle"></i></span>
                         </div>
                         
-                        <div class="pipeline-connection" id="conn5"><div class="flow-dot"></div></div>
+                        <div class="vertical-arrow" id="arrow5"><i data-lucide="arrow-down"></i></div>
                         
-                        <div class="pipeline-node" id="nodeMarketing">
-                            <i data-lucide="megaphone"></i>
-                            <span>Marketing Agent</span>
-                            <div class="node-status">Waiting</div>
+                        <!-- Marketing Agent -->
+                        <div class="pipeline-card-agent" id="pipeNode-Marketing">
+                            <div class="agent-info-left">
+                                <div class="pipe-agent-icon-wrap marketing-icon">
+                                    <i data-lucide="megaphone"></i>
+                                </div>
+                                <div>
+                                    <h4>Marketing Agent</h4>
+                                    <span>Crafts go-to-market strategy</span>
+                                </div>
+                            </div>
+                            <span class="status-indicator-icon"><i data-lucide="circle"></i></span>
                         </div>
                         
-                        <div class="pipeline-connection" id="conn6"><div class="flow-dot"></div></div>
+                        <div class="vertical-arrow" id="arrow6"><i data-lucide="arrow-down"></i></div>
                         
-                        <div class="pipeline-node" id="nodeReviewer">
-                            <i data-lucide="scale"></i>
-                            <span>Reviewer Agent</span>
-                            <div class="node-status">Waiting</div>
+                        <!-- Reviewer Agent -->
+                        <div class="pipeline-card-agent" id="pipeNode-Reviewer">
+                            <div class="agent-info-left">
+                                <div class="pipe-agent-icon-wrap reviewer-icon">
+                                    <i data-lucide="scale"></i>
+                                </div>
+                                <div>
+                                    <h4>Reviewer Agent</h4>
+                                    <span>Scores &amp; finalizes blueprint</span>
+                                </div>
+                            </div>
+                            <span class="status-indicator-icon"><i data-lucide="circle"></i></span>
                         </div>
                         
-                        <div class="pipeline-connection" id="conn7"><div class="flow-dot"></div></div>
+                        <div class="vertical-arrow" id="arrow7"><i data-lucide="arrow-down"></i></div>
                         
-                        <div class="pipeline-node end-node" id="nodeBlueprint">
-                            <i data-lucide="award"></i>
-                            <span>Blueprint Sealed</span>
+                        <!-- BLUEPRINT SEALED CARD -->
+                        <div class="pipeline-card-blueprint" id="pipeNode-Blueprint">
+                            <span class="pipe-card-label">STARTUP BLUEPRINT</span>
+                            <p class="pipe-card-text" id="pipeBlueprintStatus">Final report assembling...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Right column: Detailed status panels -->
+                    <div class="workspace-execution-col">
+                        <!-- Security card -->
+                        <div class="exec-card glass-card waiting" id="execCard-Security">
+                            <div class="exec-card-header">
+                                <div class="exec-card-info">
+                                    <div class="exec-icon bg-green-glow"><i data-lucide="shield-check"></i></div>
+                                    <div>
+                                        <h4>Security Agent</h4>
+                                        <span>Validates input &amp; ensures safety</span>
+                                    </div>
+                                </div>
+                                <span class="exec-status-pill">Waiting</span>
+                            </div>
+                            <div class="exec-progress-bar-wrap">
+                                <div class="exec-progress-bar-fill"></div>
+                            </div>
+                            <div class="exec-card-logs" id="execLogs-Security">Awaiting pipeline start...</div>
+                        </div>
+
+                        <!-- Planner card -->
+                        <div class="exec-card glass-card waiting" id="execCard-Planner">
+                            <div class="exec-card-header">
+                                <div class="exec-card-info">
+                                    <div class="exec-icon bg-purple-glow"><i data-lucide="scroll"></i></div>
+                                    <div>
+                                        <h4>Planner Agent</h4>
+                                        <span>Designs the business model</span>
+                                    </div>
+                                </div>
+                                <span class="exec-status-pill">Waiting</span>
+                            </div>
+                            <div class="exec-progress-bar-wrap">
+                                <div class="exec-progress-bar-fill"></div>
+                            </div>
+                            <div class="exec-card-logs" id="execLogs-Planner">Awaiting upstream outputs...</div>
+                        </div>
+
+                        <!-- Research card -->
+                        <div class="exec-card glass-card waiting" id="execCard-Research">
+                            <div class="exec-card-header">
+                                <div class="exec-card-info">
+                                    <div class="exec-icon bg-cyan-glow"><i data-lucide="search"></i></div>
+                                    <div>
+                                        <h4>Research Agent</h4>
+                                        <span>Analyzes market &amp; competitors</span>
+                                    </div>
+                                </div>
+                                <span class="exec-status-pill">Waiting</span>
+                            </div>
+                            <div class="exec-progress-bar-wrap">
+                                <div class="exec-progress-bar-fill"></div>
+                            </div>
+                            <div class="exec-card-logs" id="execLogs-Research">Awaiting upstream outputs...</div>
+                        </div>
+
+                        <!-- Finance card -->
+                        <div class="exec-card glass-card waiting" id="execCard-Finance">
+                            <div class="exec-card-header">
+                                <div class="exec-card-info">
+                                    <div class="exec-icon bg-orange-glow"><i data-lucide="badge-dollar-sign"></i></div>
+                                    <div>
+                                        <h4>Finance Agent</h4>
+                                        <span>Builds financial projections</span>
+                                    </div>
+                                </div>
+                                <span class="exec-status-pill">Waiting</span>
+                            </div>
+                            <div class="exec-progress-bar-wrap">
+                                <div class="exec-progress-bar-fill"></div>
+                            </div>
+                            <div class="exec-card-logs" id="execLogs-Finance">Awaiting upstream outputs...</div>
+                        </div>
+
+                        <!-- Marketing card -->
+                        <div class="exec-card glass-card waiting" id="execCard-Marketing">
+                            <div class="exec-card-header">
+                                <div class="exec-card-info">
+                                    <div class="exec-icon bg-pink-glow"><i data-lucide="megaphone"></i></div>
+                                    <div>
+                                        <h4>Marketing Agent</h4>
+                                        <span>Crafts go-to-market strategy</span>
+                                    </div>
+                                </div>
+                                <span class="exec-status-pill">Waiting</span>
+                            </div>
+                            <div class="exec-progress-bar-wrap">
+                                <div class="exec-progress-bar-fill"></div>
+                            </div>
+                            <div class="exec-card-logs" id="execLogs-Marketing">Awaiting upstream outputs...</div>
+                        </div>
+
+                        <!-- Reviewer card -->
+                        <div class="exec-card glass-card waiting" id="execCard-Reviewer">
+                            <div class="exec-card-header">
+                                <div class="exec-card-info">
+                                    <div class="exec-icon bg-indigo-glow"><i data-lucide="scale"></i></div>
+                                    <div>
+                                        <h4>Reviewer Agent</h4>
+                                        <span>Scores &amp; finalizes blueprint</span>
+                                    </div>
+                                </div>
+                                <span class="exec-status-pill">Waiting</span>
+                            </div>
+                            <div class="exec-progress-bar-wrap">
+                                <div class="exec-progress-bar-fill"></div>
+                            </div>
+                            <div class="exec-card-logs" id="execLogs-Reviewer">Awaiting upstream outputs...</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Live Ticker Logs Console -->
+                <!-- Footer button that appears when pipeline finishes -->
+                <div class="workspace-footer-btn-row" id="workspaceFooterBtnRow" style="display: none;">
+                    <button class="primary-btn view-report-gradient-btn" id="btnViewReport">
+                        View Final Report <i data-lucide="arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3.5. LIVE EXECUTION VIEW -->
+            <div id="liveExecutionView" class="sub-view">
+                <p class="view-page-label">Live Execution</p>
+                <h2 class="view-title">Live Execution Console</h2>
+                <p class="view-subtitle">Real-time raw system stream from C-Suite agent processes.</p>
+                
                 <div class="console-wrapper glass-card">
                     <div class="console-header">
                         <span><i data-lucide="terminal"></i> Live Collaboration Stream</span>
@@ -416,67 +709,439 @@
                 </div>
             </div>
 
-            <!-- 4. AGENT DETAILS / SPECIFICATIONS VIEW -->
-            <div id="agentDetailsView" class="sub-view">
-                <h2 class="view-title">AI C-Suite Specifications</h2>
+            <!-- 4. AGENTS VIEW -->
+            <div id="agentsView" class="sub-view">
+                <div class="view-header-row">
+                    <div>
+                        <p class="view-welcome-text">Your Team</p>
+                        <h2 class="view-title">AI Agents</h2>
+                        <p class="view-subtitle">Six specialists working in concert on every blueprint.</p>
+                    </div>
+                </div>
+
                 <div class="agents-grid">
+                    <!-- Security Agent Card -->
                     <div class="agent-detail-card glass-card">
-                        <h3>🛡️ Security Agent</h3>
-                        <p><strong>Responsibilities:</strong> Filters toxicity, identifies licensing challenges, and protects intellectual property.</p>
-                        <p><strong>Inputs:</strong> Raw idea description, target market parameters.</p>
-                        <p><strong>Outputs:</strong> Safety parameters, risk metrics.</p>
-                        <p><strong>Tools:</strong> Prompt sanitizers, pattern scanners.</p>
+                        <div class="agent-card-header">
+                            <div class="agent-avatar bg-green-glow">
+                                <i data-lucide="shield-check"></i>
+                            </div>
+                            <div>
+                                <h3>Security Agent</h3>
+                                <span class="agent-role">Validates input &amp; ensures safety</span>
+                            </div>
+                        </div>
+                        <p class="agent-description">Screens incoming startup ideas for compliance, IP risk and policy violations before they enter the pipeline.</p>
+                        <div class="agent-specs-columns">
+                            <div>
+                                <span class="spec-col-title">RESPONSIBILITIES</span>
+                                <ul class="spec-list">
+                                    <li>Input validation</li>
+                                    <li>Policy compliance</li>
+                                    <li>IP risk screening</li>
+                                    <li>PII detection</li>
+                                </ul>
+                                <span class="spec-col-title">INPUTS</span>
+                                <ul class="spec-list">
+                                    <li>Raw user idea</li>
+                                    <li>Industry tags</li>
+                                    <li>Geo context</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <span class="spec-col-title">TOOLS USED</span>
+                                <ul class="spec-list">
+                                    <li>Policy LLM</li>
+                                    <li>Regex sentinel</li>
+                                    <li>OFAC list</li>
+                                    <li>Prompt firewall</li>
+                                </ul>
+                                <span class="spec-col-title">OUTPUTS</span>
+                                <ul class="spec-list">
+                                    <li>Risk score</li>
+                                    <li>Allowed / flagged verdict</li>
+                                    <li>Sanitized prompt</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="agent-metrics-row">
+                            <div class="metric-progress-item">
+                                <div class="metric-label-row">
+                                    <span>ACCURACY</span>
+                                    <span>99</span>
+                                </div>
+                                <div class="metric-bar"><div class="metric-bar-fill purple-fill" style="width: 99%;"></div></div>
+                            </div>
+                            <div class="metric-progress-item">
+                                <div class="metric-label-row">
+                                    <span>SPEED</span>
+                                    <span>96</span>
+                                </div>
+                                <div class="metric-bar"><div class="metric-bar-fill purple-fill" style="width: 96%;"></div></div>
+                            </div>
+                            <div class="metric-progress-item">
+                                <div class="metric-label-row">
+                                    <span>QUALITY</span>
+                                    <span>94</span>
+                                </div>
+                                <div class="metric-bar"><div class="metric-bar-fill purple-fill" style="width: 94%;"></div></div>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Planner Agent Card -->
                     <div class="agent-detail-card glass-card">
-                        <h3>📋 Planner Agent</h3>
-                        <p><strong>Responsibilities:</strong> Deconstructs startup pitch and generates company outline drafts.</p>
-                        <p><strong>Inputs:</strong> Sanitized startup pitch context.</p>
-                        <p><strong>Outputs:</strong> Action task guidelines for workers.</p>
-                        <p><strong>Tools:</strong> Core prompt scheduler, structured naming modules.</p>
+                        <div class="agent-card-header">
+                            <div class="agent-avatar bg-purple-glow">
+                                <i data-lucide="scroll"></i>
+                            </div>
+                            <div>
+                                <h3>Planner Agent</h3>
+                                <span class="agent-role">Designs the business model</span>
+                            </div>
+                        </div>
+                        <p class="agent-description">Deconstructs the startup pitch, formats outlines, and organizes downstream goals.</p>
+                        <div class="agent-specs-columns">
+                            <div>
+                                <span class="spec-col-title">RESPONSIBILITIES</span>
+                                <ul class="spec-list">
+                                    <li>Business model design</li>
+                                    <li>Task orchestration</li>
+                                    <li>Goal decomposition</li>
+                                </ul>
+                                <span class="spec-col-title">INPUTS</span>
+                                <ul class="spec-list">
+                                    <li>Validated idea</li>
+                                    <li>User constraints</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <span class="spec-col-title">TOOLS USED</span>
+                                <ul class="spec-list">
+                                    <li>GPT-Planner</li>
+                                    <li>BMC template</li>
+                                    <li>DAG orchestrator</li>
+                                </ul>
+                                <span class="spec-col-title">OUTPUTS</span>
+                                <ul class="spec-list">
+                                    <li>Business model canvas</li>
+                                    <li>Agent task graph</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="agent-metrics-row">
+                            <div class="metric-progress-item">
+                                <div class="metric-label-row">
+                                    <span>ACCURACY</span>
+                                    <span>94</span>
+                                </div>
+                                <div class="metric-bar"><div class="metric-bar-fill purple-fill" style="width: 94%;"></div></div>
+                            </div>
+                            <div class="metric-progress-item">
+                                <div class="metric-label-row">
+                                    <span>SPEED</span>
+                                    <span>88</span>
+                                </div>
+                                <div class="metric-bar"><div class="metric-bar-fill purple-fill" style="width: 88%;"></div></div>
+                            </div>
+                            <div class="metric-progress-item">
+                                <div class="metric-label-row">
+                                    <span>QUALITY</span>
+                                    <span>96</span>
+                                </div>
+                                <div class="metric-bar"><div class="metric-bar-fill purple-fill" style="width: 96%;"></div></div>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Research Agent Card -->
                     <div class="agent-detail-card glass-card">
-                        <h3>🔍 Research Agent</h3>
-                        <p><strong>Responsibilities:</strong> Locates target competitors, sizes market segments (TAM/SAM/SOM).</p>
-                        <p><strong>Inputs:</strong> CEO briefs, location context.</p>
-                        <p><strong>Outputs:</strong> Competitive matrix, trends, target personas.</p>
-                        <p><strong>Tools:</strong> Native search, BeautifulSoup scraping.</p>
+                        <div class="agent-card-header">
+                            <div class="agent-avatar bg-cyan-glow">
+                                <i data-lucide="search"></i>
+                            </div>
+                            <div>
+                                <h3>Research Agent</h3>
+                                <span class="agent-role">Analyzes market &amp; competitors</span>
+                            </div>
+                        </div>
+                        <p class="agent-description">Locates direct competitors, queries market metrics, and maps industry entry risks.</p>
+                        <div class="agent-specs-columns">
+                            <div>
+                                <span class="spec-col-title">RESPONSIBILITIES</span>
+                                <ul class="spec-list">
+                                    <li>Competitor analysis</li>
+                                    <li>TAM/SAM/SOM sizing</li>
+                                    <li>Risk mapping</li>
+                                </ul>
+                                <span class="spec-col-title">INPUTS</span>
+                                <ul class="spec-list">
+                                    <li>Industry segment</li>
+                                    <li>Geo constraints</li>
+                                    <li>Target customer</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <span class="spec-col-title">TOOLS USED</span>
+                                <ul class="spec-list">
+                                    <li>Search engines</li>
+                                    <li>Scraping modules</li>
+                                    <li>Database queries</li>
+                                </ul>
+                                <span class="spec-col-title">OUTPUTS</span>
+                                <ul class="spec-list">
+                                    <li>Competitor matrix</li>
+                                    <li>TAM/SAM/SOM estimates</li>
+                                    <li>Industry barrier logs</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="agent-metrics-row">
+                            <div class="metric-progress-item">
+                                <div class="metric-label-row">
+                                    <span>ACCURACY</span>
+                                    <span>91</span>
+                                </div>
+                                <div class="metric-bar"><div class="metric-bar-fill purple-fill" style="width: 91%;"></div></div>
+                            </div>
+                            <div class="metric-progress-item">
+                                <div class="metric-label-row">
+                                    <span>SPEED</span>
+                                    <span>82</span>
+                                </div>
+                                <div class="metric-bar"><div class="metric-bar-fill purple-fill" style="width: 82%;"></div></div>
+                            </div>
+                            <div class="metric-progress-item">
+                                <div class="metric-label-row">
+                                    <span>QUALITY</span>
+                                    <span>93</span>
+                                </div>
+                                <div class="metric-bar"><div class="metric-bar-fill purple-fill" style="width: 93%;"></div></div>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Finance Agent Card -->
                     <div class="agent-detail-card glass-card">
-                        <h3>💰 Finance Agent</h3>
-                        <p><strong>Responsibilities:</strong> Simulates cash balance ledgers and unit economics margins.</p>
-                        <p><strong>Inputs:</strong> Cost guidelines, competitor models.</p>
-                        <p><strong>Outputs:</strong> 3-year cash forecasts, unit economics targets.</p>
-                        <p><strong>Tools:</strong> Reusable unit math formulas, programmatic sandbox calculator.</p>
+                        <div class="agent-card-header">
+                            <div class="agent-avatar bg-orange-glow">
+                                <i data-lucide="badge-dollar-sign"></i>
+                            </div>
+                            <div>
+                                <h3>Finance Agent</h3>
+                                <span class="agent-role">Builds financial projections</span>
+                            </div>
+                        </div>
+                        <p class="agent-description">Models operating margins, setup capital requirements, and estimates break-even milestones.</p>
+                        <div class="agent-specs-columns">
+                            <div>
+                                <span class="spec-col-title">RESPONSIBILITIES</span>
+                                <ul class="spec-list">
+                                    <li>Operating unit math</li>
+                                    <li>Capital requirements</li>
+                                    <li>Break-even simulation</li>
+                                </ul>
+                                <span class="spec-col-title">INPUTS</span>
+                                <ul class="spec-list">
+                                    <li>Budget guidelines</li>
+                                    <li>Cost variables</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <span class="spec-col-title">TOOLS USED</span>
+                                <ul class="spec-list">
+                                    <li>Spreadsheet engine</li>
+                                    <li>Sandbox calculator</li>
+                                    <li>Pricing templates</li>
+                                </ul>
+                                <span class="spec-col-title">OUTPUTS</span>
+                                <ul class="spec-list">
+                                    <li>Break-even point</li>
+                                    <li>Initial funding ask</li>
+                                    <li>3-year cash flow projections</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="agent-metrics-row">
+                            <div class="metric-progress-item">
+                                <div class="metric-label-row">
+                                    <span>ACCURACY</span>
+                                    <span>93</span>
+                                </div>
+                                <div class="metric-bar"><div class="metric-bar-fill purple-fill" style="width: 93%;"></div></div>
+                            </div>
+                            <div class="metric-progress-item">
+                                <div class="metric-label-row">
+                                    <span>SPEED</span>
+                                    <span>90</span>
+                                </div>
+                                <div class="metric-bar"><div class="metric-bar-fill purple-fill" style="width: 90%;"></div></div>
+                            </div>
+                            <div class="metric-progress-item">
+                                <div class="metric-label-row">
+                                    <span>QUALITY</span>
+                                    <span>92</span>
+                                </div>
+                                <div class="metric-bar"><div class="metric-bar-fill purple-fill" style="width: 92%;"></div></div>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Marketing Agent Card -->
                     <div class="agent-detail-card glass-card">
-                        <h3>📣 Marketing Agent</h3>
-                        <p><strong>Responsibilities:</strong> Designs brand storytelling messaging and customer acquisition mixes.</p>
-                        <p><strong>Inputs:</strong> Competitor matrices, cost variables.</p>
-                        <p><strong>Outputs:</strong> Value propositions, marketing roadmaps.</p>
-                        <p><strong>Tools:</strong> GTM scheduler models, CAC/LTV validation bounds.</p>
+                        <div class="agent-card-header">
+                            <div class="agent-avatar bg-pink-glow">
+                                <i data-lucide="megaphone"></i>
+                            </div>
+                            <div>
+                                <h3>Marketing Agent</h3>
+                                <span class="agent-role">Crafts go-to-market strategy</span>
+                            </div>
+                        </div>
+                        <p class="agent-description">Designs positioning narratives, value proposition sets, and channels timelines.</p>
+                        <div class="agent-specs-columns">
+                            <div>
+                                <span class="spec-col-title">RESPONSIBILITIES</span>
+                                <ul class="spec-list">
+                                    <li>Brand positioning</li>
+                                    <li>Channel strategy</li>
+                                    <li>Launch playbooks</li>
+                                </ul>
+                                <span class="spec-col-title">INPUTS</span>
+                                <ul class="spec-list">
+                                    <li>Target customer profiles</li>
+                                    <li>Competitor profiles</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <span class="spec-col-title">TOOLS USED</span>
+                                <ul class="spec-list">
+                                    <li>Audience copy LLM</li>
+                                    <li>Ad benchmarks</li>
+                                    <li>Campaign models</li>
+                                </ul>
+                                <span class="spec-col-title">OUTPUTS</span>
+                                <ul class="spec-list">
+                                    <li>Value propositions</li>
+                                    <li>90-day GTM milestones</li>
+                                    <li>Acquisition channel mixes</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="agent-metrics-row">
+                            <div class="metric-progress-item">
+                                <div class="metric-label-row">
+                                    <span>ACCURACY</span>
+                                    <span>90</span>
+                                </div>
+                                <div class="metric-bar"><div class="metric-bar-fill purple-fill" style="width: 90%;"></div></div>
+                            </div>
+                            <div class="metric-progress-item">
+                                <div class="metric-label-row">
+                                    <span>SPEED</span>
+                                    <span>92</span>
+                                </div>
+                                <div class="metric-bar"><div class="metric-bar-fill purple-fill" style="width: 92%;"></div></div>
+                            </div>
+                            <div class="metric-progress-item">
+                                <div class="metric-label-row">
+                                    <span>QUALITY</span>
+                                    <span>95</span>
+                                </div>
+                                <div class="metric-bar"><div class="metric-bar-fill purple-fill" style="width: 95%;"></div></div>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Reviewer Agent Card -->
                     <div class="agent-detail-card glass-card">
-                        <h3>⚖️ Reviewer Agent</h3>
-                        <p><strong>Responsibilities:</strong> Evaluates complete packages for math errors and strategic alignment.</p>
-                        <p><strong>Inputs:</strong> Combined draft reports of all agents.</p>
-                        <p><strong>Outputs:</strong> Pydantic Scorecard, rework instructions.</p>
-                        <p><strong>Tools:</strong> Structured scorecard auditor.</p>
+                        <div class="agent-card-header">
+                            <div class="agent-avatar bg-indigo-glow">
+                                <i data-lucide="scale"></i>
+                            </div>
+                            <div>
+                                <h3>Reviewer Agent</h3>
+                                <span class="agent-role">Scores &amp; finalizes blueprint</span>
+                            </div>
+                        </div>
+                        <p class="agent-description">Audits downstream packages, audits formulas, and assigns a readiness score.</p>
+                        <div class="agent-specs-columns">
+                            <div>
+                                <span class="spec-col-title">RESPONSIBILITIES</span>
+                                <ul class="spec-list">
+                                    <li>Cross-validation</li>
+                                    <li>Consistency check</li>
+                                    <li>Final scoring</li>
+                                </ul>
+                                <span class="spec-col-title">INPUTS</span>
+                                <ul class="spec-list">
+                                    <li>All agent outputs</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <span class="spec-col-title">TOOLS USED</span>
+                                <ul class="spec-list">
+                                    <li>Critic LLM</li>
+                                    <li>Rubric scorer</li>
+                                    <li>Conflict resolver</li>
+                                </ul>
+                                <span class="spec-col-title">OUTPUTS</span>
+                                <ul class="spec-list">
+                                    <li>Readiness scorecard</li>
+                                    <li>Validation audit logs</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="agent-metrics-row">
+                            <div class="metric-progress-item">
+                                <div class="metric-label-row">
+                                    <span>ACCURACY</span>
+                                    <span>96</span>
+                                </div>
+                                <div class="metric-bar"><div class="metric-bar-fill purple-fill" style="width: 96%;"></div></div>
+                            </div>
+                            <div class="metric-progress-item">
+                                <div class="metric-label-row">
+                                    <span>SPEED</span>
+                                    <span>86</span>
+                                </div>
+                                <div class="metric-bar"><div class="metric-bar-fill purple-fill" style="width: 86%;"></div></div>
+                            </div>
+                            <div class="metric-progress-item">
+                                <div class="metric-label-row">
+                                    <span>QUALITY</span>
+                                    <span>97</span>
+                                </div>
+                                <div class="metric-bar"><div class="metric-bar-fill purple-fill" style="width: 97%;"></div></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- 5. HISTORY VIEW -->
             <div id="historyView" class="sub-view">
-                <h2 class="view-title">Project Archive</h2>
+                <div class="view-header-row">
+                    <div>
+                        <p class="view-welcome-text">Archive</p>
+                        <h2 class="view-title">History</h2>
+                        <p class="view-subtitle">Every blueprint your agents have forged.</p>
+                    </div>
+                    <div class="history-search-wrap">
+                        <i data-lucide="search"></i>
+                        <input type="text" placeholder="Filter..." id="historySearchInput" oninput="filterHistoryTable()" />
+                    </div>
+                </div>
                 <div class="glass-card">
                     <div class="table-container">
                         <table id="historyTable">
                             <thead>
                                 <tr>
-                                    <th>Startup Concept</th>
-                                    <th>Target Market</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
+                                    <th>STARTUP IDEA</th>
+                                    <th>INDUSTRY</th>
+                                    <th>READINESS</th>
+                                    <th>DATE</th>
+                                    <th>REPORT</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -489,84 +1154,198 @@
 
             <!-- 6. FINAL REPORT VIEW (HIDDEN TILL SELECT) -->
             <div id="reportView" class="sub-view">
-                <div class="report-header-wrapper">
-                    <div>
-                        <h2 class="view-title" id="repStartupName">Startup Blueprint</h2>
-                        <p class="subtitle" id="repOneLiner">Value Proposition One-Liner</p>
-                    </div>
-                    <div class="report-actions">
-                        <button class="primary-btn" onclick="exportBlueprintMarkdown()"><i data-lucide="download"></i> Export Markdown</button>
-                    </div>
+                <!-- Fallback empty state -->
+                <div id="reportEmptyState" class="report-empty-state glass-card">
+                    <i data-lucide="file-text" class="empty-icon"></i>
+                    <h3>No Report Selected</h3>
+                    <p>Select a generated startup from History or create a New Analysis to generate a report blueprint.</p>
+                    <button class="primary-btn" onclick="navigateTo('history')">Go to History</button>
                 </div>
-
-                <!-- Report Tabs -->
-                <div class="report-tabs">
-                    <button class="rep-tab active" onclick="switchReportTab(event, 'repExecSummary')">📋 Exec Summary</button>
-                    <button class="rep-tab" onclick="switchReportTab(event, 'repMarket')">🔍 Market & Competitors</button>
-                    <button class="rep-tab" onclick="switchReportTab(event, 'repFinance')">💰 Financial Plan</button>
-                    <button class="rep-tab" onclick="switchReportTab(event, 'repMarketing')">📣 GTM & Campaign</button>
-                    <button class="rep-tab" onclick="switchReportTab(event, 'repTelemetry')">📊 Observability</button>
-                </div>
-
-                <div class="report-content-box glass-card">
-                    <!-- Tab Exec -->
-                    <div id="repExecSummary" class="rep-section-content active">
-                        <h3>Business Vision</h3>
-                        <p id="repVisionText">Vision data</p>
+                
+                <!-- Main report wrapper (hidden by default) -->
+                <div id="reportContentWrapper" style="display: none;">
+                    <div class="report-header-wrapper">
+                        <div>
+                            <h2 class="view-title" id="repStartupName">Startup Blueprint</h2>
+                            <p class="subtitle" id="repOneLiner">Value Proposition One-Liner</p>
+                        </div>
+                        <div class="report-actions">
+                            <button class="primary-btn" onclick="exportBlueprintMarkdown()"><i data-lucide="download"></i> Export Markdown</button>
+                        </div>
                     </div>
 
-                    <!-- Tab Market -->
-                    <div id="repMarket" class="rep-section-content">
-                        <h3>TAM / SAM / SOM</h3>
-                        <p id="repMarketSize">TAM metrics</p>
-                        
-                        <h3>Target customer Persona</h3>
-                        <p id="repPersona">Persona description</p>
-
-                        <h3>Market Barriers & Entry Risks</h3>
-                        <ul id="repBarriersList"></ul>
+                    <!-- Report Tabs -->
+                    <div class="report-tabs">
+                        <button class="rep-tab active" onclick="switchReportTab(event, 'repExecSummary')">
+                            <i data-lucide="file-text"></i> Exec Summary
+                        </button>
+                        <button class="rep-tab" onclick="switchReportTab(event, 'repMarket')">
+                            <i data-lucide="search"></i> Market &amp; Competitors
+                        </button>
+                        <button class="rep-tab" onclick="switchReportTab(event, 'repFinance')">
+                            <i data-lucide="badge-dollar-sign"></i> Financial Plan
+                        </button>
+                        <button class="rep-tab" onclick="switchReportTab(event, 'repMarketing')">
+                            <i data-lucide="megaphone"></i> GTM &amp; Campaign
+                        </button>
+                        <button class="rep-tab" onclick="switchReportTab(event, 'repTelemetry')">
+                            <i data-lucide="activity"></i> Observability
+                        </button>
                     </div>
 
-                    <!-- Tab Finance -->
-                    <div id="repFinance" class="rep-section-content">
-                        <h3>Revenue & Costs Modeling</h3>
-                        <p id="repRevenueModel">Pricing parameters</p>
-                        
-                        <div class="financials-grid">
-                            <div>
-                                <p><strong>Break-even Timeline:</strong> <span id="repBreakEven">Month 6</span></p>
-                                <p><strong>Capex Setup Needs:</strong> <span id="repFunding">Capital info</span></p>
+                    <div class="report-content-box glass-card">
+                        <!-- Tab Exec -->
+                        <div id="repExecSummary" class="rep-section-content active">
+                            <div class="report-inner-card">
+                                <h3>Business Vision</h3>
+                                <p id="repVisionText">Vision data</p>
                             </div>
                         </div>
 
-                        <h3>Unit Economics Summary</h3>
-                        <p id="repUnitEconomics">Unit metrics</p>
-                    </div>
+                        <!-- Tab Market -->
+                        <div id="repMarket" class="rep-section-content">
+                            <div class="report-inner-card">
+                                <h3>TAM / SAM / SOM</h3>
+                                <p id="repMarketSize">TAM metrics</p>
+                            </div>
+                            
+                            <div class="report-inner-card">
+                                <h3>Target customer Persona</h3>
+                                <p id="repPersona">Persona description</p>
+                            </div>
 
-                    <!-- Tab GTM Marketing -->
-                    <div id="repMarketing" class="rep-section-content">
-                        <h3>Brand Positioning</h3>
-                        <p id="repPositioning">Positioning statement</p>
-
-                        <h3>Value Propositions</h3>
-                        <ul id="repValueProps"></ul>
-
-                        <h3>GTM Roadmaps</h3>
-                        <ul id="repGtmTimeline"></ul>
-                    </div>
-
-                    <!-- Tab Observability -->
-                    <div id="repTelemetry" class="rep-section-content">
-                        <h3>Agent Loop Telemetry</h3>
-                        <div class="observability-metrics">
-                            <p><strong>QA Iteration Loops Run:</strong> <span id="repCycles">1</span></p>
-                            <p><strong>Total Session Tokens:</strong> <span id="repTokens">0</span></p>
-                            <p><strong>Session Compile Time:</strong> <span id="repTime">0.00s</span></p>
+                            <div class="report-inner-card">
+                                <h3>Market Barriers &amp; Entry Risks</h3>
+                                <ul id="repBarriersList"></ul>
+                            </div>
                         </div>
-                        
-                        <h3>Validation Bar Chart</h3>
-                        <div style="max-height: 250px; max-width: 450px;">
-                            <canvas id="scoresChart"></canvas>
+
+                        <!-- Tab Finance -->
+                        <div id="repFinance" class="rep-section-content">
+                            <div class="report-inner-card">
+                                <h3>Revenue &amp; Costs Modeling</h3>
+                                <p id="repRevenueModel">Pricing parameters</p>
+                            </div>
+                            
+                            <div class="financials-grid-report">
+                                <div class="report-inner-card">
+                                    <p><strong>Break-even Timeline:</strong> <span id="repBreakEven">Month 6</span></p>
+                                    <p><strong>Capex Setup Needs:</strong> <span id="repFunding">Capital info</span></p>
+                                </div>
+                            </div>
+
+                            <div class="report-inner-card">
+                                <h3>Unit Economics Summary</h3>
+                                <p id="repUnitEconomics">Unit metrics</p>
+                            </div>
+                        </div>
+
+                        <!-- Tab GTM Marketing -->
+                        <div id="repMarketing" class="rep-section-content">
+                            <div class="report-inner-card">
+                                <h3>Brand Positioning</h3>
+                                <p id="repPositioning">Positioning statement</p>
+                            </div>
+
+                            <div class="report-inner-card">
+                                <h3>Value Propositions</h3>
+                                <ul id="repValueProps"></ul>
+                            </div>
+
+                            <div class="report-inner-card">
+                                <h3>GTM Roadmaps</h3>
+                                <ul id="repGtmTimeline"></ul>
+                            </div>
+                        </div>
+
+                        <!-- Tab Observability -->
+                        <div id="repTelemetry" class="rep-section-content">
+                            <div class="report-inner-card">
+                                <h3>Agent Loop Telemetry</h3>
+                                <div class="observability-metrics-row">
+                                    <div class="telemetry-item">
+                                        <span class="telemetry-label">QA Iteration Loops Run</span>
+                                        <span class="telemetry-val" id="repCycles">1</span>
+                                    </div>
+                                    <div class="telemetry-item">
+                                        <span class="telemetry-label">Total Session Tokens</span>
+                                        <span class="telemetry-val" id="repTokens">0</span>
+                                    </div>
+                                    <div class="telemetry-item">
+                                        <span class="telemetry-label">Session Compile Time</span>
+                                        <span class="telemetry-val" id="repTime">0.00s</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="report-inner-card chart-container-card">
+                                <h3>Validation Bar Chart</h3>
+                                <div class="report-chart-wrap">
+                                    <canvas id="scoresChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. SETTINGS VIEW -->
+            <div id="settingsView" class="sub-view">
+                <div class="view-header-row">
+                    <div>
+                        <p class="view-welcome-text">Workspace</p>
+                        <h2 class="view-title">Settings</h2>
+                        <p class="view-subtitle">Configure your DreamForge workspace parameters.</p>
+                    </div>
+                </div>
+                <div class="settings-cards-stack">
+                    <!-- Workspace details -->
+                    <div class="settings-card glass-card">
+                        <h3>Workspace Details</h3>
+                        <div class="settings-form-row">
+                            <div class="settings-form-group">
+                                <label>Workspace name</label>
+                                <input type="text" value="Nova Labs" disabled />
+                            </div>
+                            <div class="settings-form-group">
+                                <label>Email</label>
+                                <input type="email" value="founder@novalabs.ai" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Agent preferences -->
+                    <div class="settings-card glass-card">
+                        <h3>Agent preferences</h3>
+                        <div class="settings-checkbox-list">
+                            <div class="settings-checkbox-item">
+                                <input type="checkbox" id="prefVerbose" checked />
+                                <label for="prefVerbose">Verbose activity log</label>
+                            </div>
+                            <div class="settings-checkbox-item">
+                                <input type="checkbox" id="prefAutosave" checked />
+                                <label for="prefAutosave">Auto-save reports</label>
+                            </div>
+                            <div class="settings-checkbox-item">
+                                <input type="checkbox" id="prefWebResearch" checked />
+                                <label for="prefWebResearch">Allow web research</label>
+                            </div>
+                            <div class="settings-checkbox-item">
+                                <input type="checkbox" id="prefBeta" />
+                                <label for="prefBeta">Beta agents</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Plan details -->
+                    <div class="settings-card glass-card">
+                        <h3>Plan</h3>
+                        <div class="settings-plan-row">
+                            <div>
+                                <h4 class="plan-title">Pro · $49/mo</h4>
+                                <p class="plan-desc">240 credits / month · unlimited workspaces</p>
+                            </div>
+                            <button class="primary-btn plan-upgrade-btn">Upgrade</button>
                         </div>
                     </div>
                 </div>

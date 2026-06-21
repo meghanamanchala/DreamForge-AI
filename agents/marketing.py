@@ -26,7 +26,7 @@ class MarketingOutputSchema(BaseModel):
     )
 
 class MarketingAgent(BaseAgent):
-    def __init__(self, client, model="gemini-2.5-flash"):
+    def __init__(self, client, model="gemini-flash-latest"):
         super().__init__(client, model)
         self.system_instruction = (
             "You are the Chief Marketing Officer (CMO) of DreamForge AI.\n"
