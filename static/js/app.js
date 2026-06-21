@@ -23,7 +23,7 @@ function navigateTo(targetView) {
         return;
     }
     
-    // Show app sheel
+    // Show app shell
     landing.classList.remove("active");
     appShell.classList.add("active");
     
@@ -52,6 +52,16 @@ function navigateTo(targetView) {
         loadDashboardData();
     } else if (targetView === 'history') {
         loadHistoryTable();
+    } else if (targetView === 'report') {
+        const reportEmpty = document.getElementById("reportEmptyState");
+        const reportContent = document.getElementById("reportContentWrapper");
+        if (window.currentBlueprintExportData) {
+            reportEmpty.style.display = "none";
+            reportContent.style.display = "block";
+        } else {
+            reportEmpty.style.display = "flex";
+            reportContent.style.display = "none";
+        }
     }
 }
 
@@ -64,13 +74,29 @@ async function loadDashboardData() {
         
         // Update stats
         document.getElementById("statAnalyses").innerText = sessions.length;
+        document.getElementById("statReports").innerText = sessions.filter(s => s.status === 'completed').length;
+        
+        // Calculate average readiness
+        let totalScore = 0;
+        let completedCount = 0;
+        sessions.forEach(s => {
+            if (s.status === 'completed') {
+                totalScore += (s.score || 84);
+                completedCount++;
+            }
+        });
+        const avgScore = completedCount > 0 ? Math.round(totalScore / completedCount) : 84;
+        document.getElementById("statReadiness").innerText = avgScore + "%";
+        
+        // Render Chart.js line chart for throughput
+        renderThroughputChart();
         
         // Populate dashboard table
         const tbody = document.querySelector("#projectsTable tbody");
         tbody.innerHTML = "";
         
         if (sessions.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-secondary);">No startups forged yet. Start one under New Analysis!</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-secondary);">No startups forged yet. Start one under New Analysis!</td></tr>`;
             return;
         }
         
@@ -78,17 +104,73 @@ async function loadDashboardData() {
         const recent = sessions.slice(0, 3);
         recent.forEach(s => {
             const tr = document.createElement("tr");
+            const score = s.score || 85;
+            const dateStr = s.created_at ? new Date(s.created_at).toISOString().split('T')[0] : '2026-06-18';
             tr.innerHTML = `
                 <td><strong>${s.idea.substring(0, 45)}...</strong></td>
-                <td>${s.target_market || 'Global'}</td>
+                <td>${dateStr}</td>
+                <td>
+                    <div class="table-progress-cell">
+                        <div class="metric-bar mini-bar"><div class="metric-bar-fill purple-fill" style="width: ${score}%;"></div></div>
+                        <span class="score-num">${score}</span>
+                    </div>
+                </td>
                 <td><span class="status-pill ${s.status}">${s.status.toUpperCase()}</span></td>
-                <td><button class="glass-btn" onclick="viewSessionBlueprint('${s.id}')">View</button></td>
+                <td><a href="#" class="open-link" onclick="viewSessionBlueprint('${s.id}'); event.preventDefault();">Open</a></td>
             `;
             tbody.appendChild(tr);
         });
     } catch (e) {
         console.error("Failed to load dashboard statistics:", e);
     }
+}
+
+// Render Dashboard line chart for pipeline throughput
+function renderThroughputChart() {
+    const ctx = document.getElementById("throughputChart").getContext("2d");
+    
+    if (window.throughputChartInstance) {
+        window.throughputChartInstance.destroy();
+    }
+    
+    const gradient = ctx.createLinearGradient(0, 0, 0, 160);
+    gradient.addColorStop(0, "rgba(168, 85, 247, 0.4)");
+    gradient.addColorStop(1, "rgba(168, 85, 247, 0.0)");
+    
+    window.throughputChartInstance = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: ["M1", "M3", "M6", "M9", "M12", "M15", "M18", "M24"],
+            datasets: [{
+                data: [4, 12, 28, 45, 80, 128, 200, 320],
+                borderColor: "#a855f7",
+                borderWidth: 2,
+                fill: true,
+                backgroundColor: gradient,
+                tension: 0.4,
+                pointRadius: 0,
+                pointHoverRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { color: "#71717a", font: { size: 10 } }
+                },
+                y: {
+                    grid: { color: "rgba(255, 255, 255, 0.05)" },
+                    ticks: { color: "#71717a", font: { size: 10 } },
+                    border: { dash: [4, 4] }
+                }
+            },
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
 }
 
 // ----------------- HISTORY TABLE LOADER -----------------
@@ -101,23 +183,47 @@ async function loadHistoryTable() {
         tbody.innerHTML = "";
         
         if (sessions.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-secondary);">No historical records found.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-secondary);">No historical records found.</td></tr>`;
             return;
         }
         
         sessions.forEach(s => {
             const tr = document.createElement("tr");
+            const score = s.score || 85;
+            const dateStr = s.created_at ? new Date(s.created_at).toISOString().split('T')[0] : '2026-06-18';
             tr.innerHTML = `
                 <td><strong>${s.idea.substring(0, 60)}...</strong></td>
-                <td>${s.target_market || 'Global'}</td>
-                <td><span class="status-pill ${s.status}">${s.status.toUpperCase()}</span></td>
-                <td><button class="glass-btn" onclick="viewSessionBlueprint('${s.id}')">View Blueprint</button></td>
+                <td>${s.industry || 'SaaS'}</td>
+                <td>
+                    <div class="table-progress-cell">
+                        <div class="metric-bar mini-bar"><div class="metric-bar-fill purple-fill" style="width: ${score}%;"></div></div>
+                        <span class="score-num">${score}</span>
+                    </div>
+                </td>
+                <td>${dateStr}</td>
+                <td><a href="#" class="view-report-link" onclick="viewSessionBlueprint('${s.id}'); event.preventDefault();">View ↗</a></td>
             `;
             tbody.appendChild(tr);
         });
     } catch (e) {
         console.error("Failed to load history list:", e);
     }
+}
+
+// History search filter
+function filterHistoryTable() {
+    const input = document.getElementById("historySearchInput");
+    const filter = input.value.toLowerCase();
+    const rows = document.querySelectorAll("#historyTable tbody tr");
+    
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (text.includes(filter)) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
 }
 
 // ----------------- NEW ANALYSIS FORM -----------------
@@ -127,7 +233,7 @@ function useExample(exampleText) {
 
 async function submitStartupAnalysis() {
     const idea = document.getElementById("startupIdea").value;
-    const market = document.getElementById("ideaMarket").value;
+    const market = document.getElementById("ideaMarketType").value;
     const industry = document.getElementById("ideaIndustry").value;
     
     if (idea.trim().length < 20) {
