@@ -26,7 +26,7 @@ class EvaluationScorecard(BaseModel):
     )
 
 class ReviewerAgent(BaseAgent):
-    def __init__(self, client, model="gemini-flash-latest"):
+    def __init__(self, client, model="gemini-3.1-flash-lite"):
         super().__init__(client, model)
         self.system_instruction = (
             "You are the Lead Evaluation Agent and Investment Auditor at DreamForge AI.\n"

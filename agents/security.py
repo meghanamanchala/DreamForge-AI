@@ -16,7 +16,7 @@ class SecurityCheckSchema(BaseModel):
     )
 
 class SecurityAgent(BaseAgent):
-    def __init__(self, client, model="gemini-flash-latest"):
+    def __init__(self, client, model="gemini-3.1-flash-lite"):
         super().__init__(client, model)
         self.system_instruction = (
             "You are the Chief Information Security Officer (CISO) and Legal Counsel for DreamForge AI.\n"

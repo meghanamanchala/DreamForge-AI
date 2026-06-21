@@ -31,9 +31,9 @@ class DreamForgeOrchestrator:
             self.reviewer_agent = None
         else:
             self.client = genai.Client(api_key=api_key)
-            # Initialize agents with gemini-flash-latest which has a 1500 RPD free tier limit
+            # Initialize agents with gemini-3.1-flash-lite which has a 1500 RPD free tier limit
             # instead of gemini-2.5-flash which is limited to 20 RPD on free accounts.
-            model_name = "gemini-flash-latest"
+            model_name = "gemini-3.1-flash-lite"
             self.security_agent = SecurityAgent(self.client, model=model_name)
             self.planner_agent = PlannerAgent(self.client, model=model_name)
             self.research_agent = ResearchAgent(self.client, model=model_name, tavily_api_key=tavily_key)
