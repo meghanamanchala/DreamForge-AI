@@ -34,7 +34,7 @@ class FinanceOutputSchema(BaseModel):
     )
 
 class FinanceAgent(BaseAgent):
-    def __init__(self, client, model="gemini-2.5-flash"):
+    def __init__(self, client, model="gemini-flash-latest"):
         super().__init__(client, model)
         self.system_instruction = (
             "You are the Chief Financial Officer (CFO) of DreamForge AI.\n"

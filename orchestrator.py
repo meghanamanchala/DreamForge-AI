@@ -31,13 +31,15 @@ class DreamForgeOrchestrator:
             self.reviewer_agent = None
         else:
             self.client = genai.Client(api_key=api_key)
-            # Initialize agents
-            self.security_agent = SecurityAgent(self.client)
-            self.planner_agent = PlannerAgent(self.client)
-            self.research_agent = ResearchAgent(self.client, tavily_api_key=tavily_key)
-            self.finance_agent = FinanceAgent(self.client)
-            self.marketing_agent = MarketingAgent(self.client)
-            self.reviewer_agent = ReviewerAgent(self.client)
+            # Initialize agents with gemini-flash-latest which has a 1500 RPD free tier limit
+            # instead of gemini-2.5-flash which is limited to 20 RPD on free accounts.
+            model_name = "gemini-flash-latest"
+            self.security_agent = SecurityAgent(self.client, model=model_name)
+            self.planner_agent = PlannerAgent(self.client, model=model_name)
+            self.research_agent = ResearchAgent(self.client, model=model_name, tavily_api_key=tavily_key)
+            self.finance_agent = FinanceAgent(self.client, model=model_name)
+            self.marketing_agent = MarketingAgent(self.client, model=model_name)
+            self.reviewer_agent = ReviewerAgent(self.client, model=model_name)
 
     def _log_status(self, session_id, agent_name, step_name, thoughts, output_data=None, agent=None):
         """Helper to save log to SQLite and trigger UI callback."""

@@ -29,7 +29,7 @@ class ResearchOutputSchema(BaseModel):
     )
 
 class ResearchAgent(BaseAgent):
-    def __init__(self, client, model="gemini-2.5-flash", tavily_api_key=None):
+    def __init__(self, client, model="gemini-flash-latest", tavily_api_key=None):
         super().__init__(client, model)
         self.tavily_api_key = tavily_api_key
         self.system_instruction = (
