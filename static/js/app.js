@@ -12,6 +12,17 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ----------------- VIEW MANAGER -----------------
+const VIEW_LABELS = {
+    dashboard: 'Dashboard',
+    newAnalysis: 'New Analysis',
+    agentWorkspace: 'Agent Workspace',
+    liveExecution: 'Live Execution',
+    report: 'Reports',
+    agents: 'Agents',
+    history: 'History',
+    settings: 'Settings',
+};
+
 function navigateTo(targetView) {
     // View groups
     const landing = document.getElementById("landingPage");
@@ -26,6 +37,10 @@ function navigateTo(targetView) {
     // Show app shell
     landing.classList.remove("active");
     appShell.classList.add("active");
+    
+    // Update topbar breadcrumb
+    const breadcrumb = document.getElementById("topbarBreadcrumb");
+    if (breadcrumb) breadcrumb.textContent = VIEW_LABELS[targetView] || targetView;
     
     // Deactivate all sub views
     const subViews = document.querySelectorAll(".sub-view");
