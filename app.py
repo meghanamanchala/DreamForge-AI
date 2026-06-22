@@ -100,6 +100,20 @@ async def list_sessions():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.delete("/api/session/{session_id}")
+async def delete_session(session_id: str):
+    """Deletes a single analysis session and all its data."""
+    found = database.delete_session(session_id)
+    if not found:
+        raise HTTPException(status_code=404, detail="Session not found.")
+    return {"message": "Session deleted successfully."}
+
+@app.delete("/api/sessions")
+async def delete_all_sessions():
+    """Deletes ALL sessions and their associated data."""
+    database.delete_all_sessions()
+    return {"message": "All sessions deleted successfully."}
+
 # Static assets serving routing
 # Ensure static directory exists
 os.makedirs("static", exist_ok=True)

@@ -154,5 +154,25 @@ def get_all_sessions():
     conn.close()
     return [dict(row) for row in rows]
 
+def delete_session(session_id):
+    """Deletes a session and all its associated logs/blueprints (CASCADE)."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    # Enable foreign key support so CASCADE works in SQLite
+    cursor.execute("PRAGMA foreign_keys = ON")
+    cursor.execute("DELETE FROM sessions WHERE id = ?", (session_id,))
+    conn.commit()
+    conn.close()
+    return cursor.rowcount > 0
+
+def delete_all_sessions():
+    """Deletes ALL sessions and cascaded data from the database."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("PRAGMA foreign_keys = ON")
+    cursor.execute("DELETE FROM sessions")
+    conn.commit()
+    conn.close()
+
 # Initialize on import
 init_db()

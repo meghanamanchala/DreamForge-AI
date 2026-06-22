@@ -12,6 +12,17 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ----------------- VIEW MANAGER -----------------
+const VIEW_LABELS = {
+    dashboard: 'Dashboard',
+    newAnalysis: 'New Analysis',
+    agentWorkspace: 'Agent Workspace',
+    liveExecution: 'Live Execution',
+    report: 'Reports',
+    agents: 'Agents',
+    history: 'History',
+    settings: 'Settings',
+};
+
 function navigateTo(targetView) {
     // View groups
     const landing = document.getElementById("landingPage");
@@ -26,6 +37,10 @@ function navigateTo(targetView) {
     // Show app shell
     landing.classList.remove("active");
     appShell.classList.add("active");
+    
+    // Update topbar breadcrumb
+    const breadcrumb = document.getElementById("topbarBreadcrumb");
+    if (breadcrumb) breadcrumb.textContent = VIEW_LABELS[targetView] || targetView;
     
     // Deactivate all sub views
     const subViews = document.querySelectorAll(".sub-view");
@@ -181,9 +196,33 @@ async function loadHistoryTable() {
         const sessions = data.sessions || [];
         const tbody = document.querySelector("#historyTable tbody");
         tbody.innerHTML = "";
+
+        // Inject/update the Clear All toolbar button
+        let toolbar = document.getElementById("historyToolbar");
+        if (!toolbar) {
+            const historyView = document.getElementById("historyView");
+            const tableWrapper = historyView ? historyView.querySelector(".table-wrapper, table") : null;
+            toolbar = document.createElement("div");
+            toolbar.id = "historyToolbar";
+            toolbar.style.cssText = "display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-bottom:12px;";
+            if (tableWrapper) {
+                tableWrapper.parentNode.insertBefore(toolbar, tableWrapper);
+            }
+        }
+        toolbar.innerHTML = sessions.length > 0
+            ? `<button id="clearAllHistoryBtn" onclick="clearAllHistory()" style="
+                display:flex;align-items:center;gap:6px;padding:7px 14px;
+                background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.35);
+                color:#f87171;border-radius:8px;cursor:pointer;font-size:13px;
+                font-weight:600;transition:all .2s;
+               " onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'">
+                <svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='3 6 5 6 21 6'></polyline><path d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'></path></svg>
+                Clear All History
+              </button>`
+            : ``;
         
         if (sessions.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-secondary);">No historical records found.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-secondary);">No historical records found.</td></tr>`;
             return;
         }
         
@@ -202,11 +241,56 @@ async function loadHistoryTable() {
                 </td>
                 <td>${dateStr}</td>
                 <td><a href="#" class="view-report-link" onclick="viewSessionBlueprint('${s.id}'); event.preventDefault();">View ↗</a></td>
+                <td>
+                    <button onclick="deleteSession('${s.id}', this)" title="Delete this entry" style="
+                        background:rgba(239,68,68,0.10);border:1px solid rgba(239,68,68,0.25);
+                        color:#f87171;border-radius:6px;padding:4px 8px;cursor:pointer;
+                        font-size:12px;transition:all .2s;display:inline-flex;align-items:center;gap:4px;
+                    " onmouseover="this.style.background='rgba(239,68,68,0.28)'" onmouseout="this.style.background='rgba(239,68,68,0.10)'">
+                        <svg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='3 6 5 6 21 6'></polyline><path d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'></path></svg>
+                        Delete
+                    </button>
+                </td>
             `;
             tbody.appendChild(tr);
         });
     } catch (e) {
         console.error("Failed to load history list:", e);
+    }
+}
+
+// Delete a single history session
+async function deleteSession(sessionId, btnEl) {
+    if (!confirm("Delete this analysis? This cannot be undone.")) return;
+    try {
+        btnEl.disabled = true;
+        btnEl.textContent = "Deleting...";
+        const res = await fetch(`/api/session/${sessionId}`, { method: "DELETE" });
+        if (!res.ok) throw new Error("Delete failed");
+        // Animate row out
+        const row = btnEl.closest("tr");
+        row.style.transition = "opacity .3s, transform .3s";
+        row.style.opacity = "0";
+        row.style.transform = "translateX(20px)";
+        setTimeout(() => loadHistoryTable(), 320);
+    } catch (e) {
+        console.error("Delete session error:", e);
+        alert("Failed to delete. Please try again.");
+        btnEl.disabled = false;
+        btnEl.textContent = "Delete";
+    }
+}
+
+// Delete ALL history sessions
+async function clearAllHistory() {
+    if (!confirm("Clear ALL history? Every analysis record will be permanently deleted. This cannot be undone.")) return;
+    try {
+        const res = await fetch("/api/sessions", { method: "DELETE" });
+        if (!res.ok) throw new Error("Clear all failed");
+        loadHistoryTable();
+    } catch (e) {
+        console.error("Clear all history error:", e);
+        alert("Failed to clear history. Please try again.");
     }
 }
 

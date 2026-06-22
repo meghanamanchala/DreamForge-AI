@@ -16,10 +16,10 @@ class BaseAgent:
         self.last_latency_ms = 0
 
     def _execute_with_retry(self, contents, config):
-        """Helper to invoke Gemini API with automatic 429 rate limit retry backoffs."""
-        max_retries = 5
-        base_delay = 6.0
-        
+        """Helper to invoke Gemini API with automatic retry backoffs for 429 and 503 errors."""
+        max_retries = 6
+        base_delay = 8.0
+
         for attempt in range(max_retries):
             try:
                 response = self.client.models.generate_content(
@@ -30,11 +30,15 @@ class BaseAgent:
                 return response
             except Exception as e:
                 err_msg = str(e).lower()
-                is_rate_limit = "429" in err_msg or "resource_exhausted" in err_msg or "quota" in err_msg or "limit" in err_msg
-                
-                if is_rate_limit and attempt < max_retries - 1:
-                    sleep_time = base_delay * (1.5 ** attempt) # Backoff: 6s, 9s, 13.5s, 20.25s
-                    print(f"[RATE LIMIT 429] Free Tier rate limit hit. Retrying in {sleep_time:.2f}s... (Attempt {attempt+1}/{max_retries})")
+                is_rate_limit = "429" in err_msg or "resource_exhausted" in err_msg or "quota" in err_msg
+                is_unavailable = "503" in err_msg or "unavailable" in err_msg or "high demand" in err_msg or "try again" in err_msg
+
+                if (is_rate_limit or is_unavailable) and attempt < max_retries - 1:
+                    # 503 needs longer waits since the server needs time to recover
+                    delay_multiplier = 2.0 if is_unavailable else 1.5
+                    sleep_time = base_delay * (delay_multiplier ** attempt)
+                    error_type = "503 UNAVAILABLE" if is_unavailable else "429 RATE LIMIT"
+                    print(f"[{error_type}] Retrying in {sleep_time:.1f}s... (Attempt {attempt+1}/{max_retries})")
                     time.sleep(sleep_time)
                 else:
                     raise e
